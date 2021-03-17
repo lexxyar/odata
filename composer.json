@@ -1,0 +1,28 @@
+{
+    "name": "lexxsoft/odata",
+    "description": "Laravel OData REST API service",
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Aleksey Komov",
+            "email": "lexxyar@ya.ru"
+        }
+    ],
+    "require": {
+        "php": "^7.3|^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "LexxSoft\\odata\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LexxSoft\\odata\\OdataServiceProvider"
+            ]
+        }
+    }
+}
