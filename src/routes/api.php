@@ -1,25 +1,29 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use LexxSoft\odata\Odata;
 
 Route::prefix('odata')->group(function () {
-    Route::group(['middleware' => 'auth:api'], function () {
-        Route::get('/{any}', function (Request $request) {
-            $odata = new \LexxSoft\odata\Odata($request);
-            return $odata->response();
-        })->where('any', '^(?!api).*$');
-        Route::post('/{any}', function (Request $request) {
-            $odata = new \LexxSoft\odata\Odata($request);
-            return $odata->response();
-        })->where('any', '^(?!api).*$');
-        Route::put('/{any}', function (Request $request) {
-            $odata = new \LexxSoft\odata\Odata($request);
-            return $odata->response();
-        })->where('any', '^(?!api).*$');
-        Route::delete('/{any}', function (Request $request) {
-            $odata = new \LexxSoft\odata\Odata($request);
-            return $odata->response();
-        })->where('any', '^(?!api).*$');
-    });
+  Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('/{any}', function () {
+//      $odata = new Odata($request);
+      $odata = new Odata();
+      return $odata->response();
+    })->where('any', '^(?!(api|odata)).*$');
+    Route::post('/{any}', function () {
+//      $odata = new Odata($request);
+      $odata = new Odata();
+      return $odata->response();
+    })->where('any', '^(?!(api|odata)).*$');
+    Route::put('/{any}', function () {
+//      $odata = new Odata($request);
+      $odata = new Odata();
+      return $odata->response();
+    })->where('any', '^(?!(api|odata)).*$');
+    Route::delete('/{any}', function () {
+//      $odata = new Odata($request);
+      $odata = new Odata();
+      return $odata->response();
+    })->where('any', '^(?!(api|odata)).*$');
+  });
 });

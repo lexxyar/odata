@@ -4,7 +4,7 @@ namespace LexxSoft\odata\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class DefaultResource extends JsonResource
+class ODataDefaultResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

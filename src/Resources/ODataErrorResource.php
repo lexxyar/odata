@@ -2,21 +2,22 @@
 
 namespace LexxSoft\odata\Resources;
 
+use Exception;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ErrorResource extends JsonResource
+class ODataErrorResource extends JsonResource
 {
     public static $wrap = 'error';
     /**
-     * @var \Exception
+     * @var Exception
      */
     private $error;
 
     /**
-     * ErrorResource constructor.
-     * @param \Exception $error
+     * ODataErrorResource constructor.
+     * @param Exception $error
      */
-    public function __construct(\Exception $error)
+    public function __construct(Exception $error)
     {
         $this->error = $error;
         parent::__construct([]);
