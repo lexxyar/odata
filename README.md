@@ -98,3 +98,35 @@ If some logic should return some error, you must `throw \Exception`. This will g
     -[ ] `$inlinecount`
   -[ ] Custom query options (i.e. `/odata/products?x=y`)
 -[ ] Middleware routes (current is `auth:api`)
+
+# Data manipulations
+## Reading data
+## Updating data
+To update data you should use `PUT` method. Then, fill request body by new data.
+> Note, that system wil search record by key field, like `id`, which should be passed in request body with other data fields
+
+Request example:
+```http request
+PUT /odata/role(2)
+```
+```json
+{
+    "id": 2,
+	"name":"User role"
+}
+```   
+### Updating relations
+To update Many-To-Many relationship, you need pass array of ID's for relation field name
+```json
+{
+    "id": 2,
+    "permissions": [5,6,7]
+}
+```  
+### Updating retations with pivot
+Somtimes Many-To-Many table has additional fields. To update them, pass array of objects for relation field.
+> Note, **key** field is required.
+
+## Creating data
+## Deleting data
+

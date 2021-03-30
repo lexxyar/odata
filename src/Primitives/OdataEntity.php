@@ -367,12 +367,16 @@ class OdataEntity
         foreach ($data[$relationship->snakeName] as $datum) {
           $idSync = 0;
           $pivotSync = [];
-          foreach ($datum as $k => $v) {
-            if ($k == 'id') {
-              $idSync = $v;
-            } else {
-              $pivotSync[$k] = $v;
+          if (is_array($datum)) {
+            foreach ($datum as $k => $v) {
+              if ($k == $oModel->getKeyName()) {
+                $idSync = $v;
+              } else {
+                $pivotSync[$k] = $v;
+              }
             }
+          } else {
+            $idSync = $datum;
           }
           $related->values[$idSync] = $pivotSync;
         }

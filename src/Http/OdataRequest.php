@@ -69,7 +69,8 @@ class OdataRequest
     $this->requestPathParts = explode('/', request()->getPathInfo());
     array_shift($this->requestPathParts); // Убираем пустой
     array_shift($this->requestPathParts); // убираем 'odata'
-    $this->countRequested = in_array( urlencode('$count'), $this->requestPathParts);
+    $this->countRequested = in_array(urlencode('$count'), $this->requestPathParts)
+      || in_array('$count', $this->requestPathParts);
 
     $queryParams = request()->all();
 
