@@ -288,10 +288,10 @@ class OdataEntity
    */
   private function dynamicUpdateData()
   {
-
     $data = json_decode(request()->getContent(), true);
     $keyField = $this->oModel->getKeyName();
-    $find = $this->oModel->findOrFail($data[$keyField]);
+    $id = array_key_exists($keyField, $data)?$data[$keyField]:$this->key;
+    $find = $this->oModel->findOrFail($id);
 
     // check relation fields
     $aRelated = $this->extractRelationsFromInputData($data);
