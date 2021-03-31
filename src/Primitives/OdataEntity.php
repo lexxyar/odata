@@ -4,6 +4,7 @@
 namespace LexxSoft\odata\Primitives;
 
 use Exception;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use LexxSoft\odata\Exceptions\OdataModelIsNotRestableException;
 use LexxSoft\odata\Exceptions\OdataModelNotExistException;
 use LexxSoft\odata\Exceptions\OdataTryCallControllerException;
@@ -202,6 +203,11 @@ class OdataEntity
   private function dynamicReadData()
   {
     $queryBuilder = $this->oModel->newModelQuery();
+
+    // Check on SoftDelete
+    if (in_array(SoftDeletes::class, class_uses($this->oModel))) {
+      $queryBuilder->whereNull('deleted_at');
+    }
 
     if ($this->key !== null) {
       $queryBuilder->where($this->oModel->getKeyName(), '=', $this->key);
