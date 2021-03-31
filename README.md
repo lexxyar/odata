@@ -1,7 +1,20 @@
 # Laravel REST API OData-like
 
 ![GitHub](https://img.shields.io/github/license/lexxyar/odata)
-![GitHub all releases](https://img.shields.io/github/downloads/lexxyar/odata/total)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/lexxyar/odata)
+
+# Contents
+- [Installation](#installation)
+- [Customisation data selection](#customisation-data-selection)
+    - [Controller methods](#controller-methods)
+    - [Executing default data logic in controllers methods](#executing-default-data-logic-in-controllers-methods)
+    - [Returning controller result](#returning-controller-result)
+- [OData features](#odata-features)
+- [Data manipulation](#data-manipulations)
+    - [Reading data](#reading-data)
+    - [Updating data](#updating-data)
+    - [Creating data](#creating-data)
+    - [Deleting data](#deleting-data)
 
 # Installation
 ## Setup

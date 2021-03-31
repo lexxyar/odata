@@ -1,0 +1,26 @@
+{
+  "name": "odata",
+  "version": "0.1.0",
+  "description": "OData composer package for laravel",
+  "main": "index.js",
+  "scripts": {
+    "patch": "npm version patch",
+    "minor": "npm version minor",
+    "major": "npm version release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lexxyar/odata.git"
+  },
+  "keywords": [
+    "OData",
+    "Laravel",
+    "PHP"
+  ],
+  "author": "Aleksey Komov",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lexxyar/odata/issues"
+  },
+  "homepage": "https://github.com/lexxyar/odata#readme"
+}
