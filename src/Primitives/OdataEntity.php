@@ -99,7 +99,7 @@ class OdataEntity
     }
 
     // This is metadata
-    if ($this->entityName == urlencode('$metadata')) {
+    if ($this->entityName == urlencode('$metadata') || $this->entityName == '$metadata') {
       $this->isMetadata = true;
     } else {
       $this->oModel = self::checkModel($this->modelName);
