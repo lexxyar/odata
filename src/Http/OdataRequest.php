@@ -50,6 +50,11 @@ class OdataRequest
   private $countRequested = false;
 
   /**
+   * @var bool
+   */
+  public $force = false;
+
+  /**
    * Возвращает инстанцию класса
    * @return OdataRequest
    */
@@ -88,6 +93,9 @@ class OdataRequest
     }
     if (isset($queryParams['$skip'])) {
       $this->parseOffset($queryParams['$skip']);
+    }
+    if (isset($queryParams['$force'])) {
+      $this->force = true;
     }
   }
 

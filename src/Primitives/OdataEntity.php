@@ -206,7 +206,11 @@ class OdataEntity
 
     // Check on SoftDelete
     if (in_array(SoftDeletes::class, class_uses($this->oModel))) {
-      $queryBuilder->whereNull('deleted_at');
+      if (OdataRequest::getInstance()->force){
+//        $queryBuilder->withTrashed();
+      }else {
+        $queryBuilder->whereNull('deleted_at');
+      }
     }
 
     if ($this->key !== null) {
@@ -333,7 +337,12 @@ class OdataEntity
     if ($this->key === null) {
       throw new Exception('Key not set');
     }
-    $this->oModel->where($this->oModel->getKeyName(), '=', $this->key)->delete();
+
+    if (OdataRequest::getInstance()->force){
+      $this->oModel->where($this->oModel->getKeyName(), '=', $this->key)->forceDelete();
+    }else {
+      $this->oModel->where($this->oModel->getKeyName(), '=', $this->key)->delete();
+    }
 
     $res = new stdClass();
     $res->status = 'success';

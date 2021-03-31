@@ -101,6 +101,17 @@ If some logic should return some error, you must `throw \Exception`. This will g
 
 # Data manipulations
 ## Reading data
+To read data, use `GET` request. Also you can add parameters to your query from `OData features` section
+```http request
+GET /odata/role?$top=5
+```
+
+### Reading `SoftDelete` data
+To get data with trashed records, use `$force` flag in query request
+```http request
+GET /odata/role?$force=true
+```
+
 ## Updating data
 To update data you should use `PUT` method. Then, fill request body by new data.
 > Note, that system wil search record by key field, like `id`, which should be passed in request body with other data fields
@@ -126,7 +137,34 @@ To update Many-To-Many relationship, you need pass array of ID's for relation fi
 ### Updating retations with pivot
 Somtimes Many-To-Many table has additional fields. To update them, pass array of objects for relation field.
 > Note, **key** field is required.
+```json
+ {
+     "id": 2,
+     "permissions": [
+        {"id": 5, "author": "Larry"},
+        {"id": 8, "author": "John"}
+     ]
+ }
+ ``` 
 
 ## Creating data
-## Deleting data
+To create new record, use `POST` request type
+```http request
+POST /odata/role
+```
+```json
+{
+    "name": "New role"
+}
+```
 
+## Deleting data
+To delete data, use `DELETE` request with record key
+```http request
+DELETE /odata/role(2)?$force=true
+```
+### SoftDelete
+To delete data permanently, use `$force` query parameter.
+```http request
+DELETE /odata/role(2)?$force=true
+```
