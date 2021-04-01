@@ -311,7 +311,7 @@ class OdataEntity
     $isValid = $this->oModel->validateObject();
     if ($isValid) {
       foreach ($data as $field => $value) {
-        if (isset($find->$field) && $find->$field !== $value) {
+        if (in_array($field, array_keys($find->attributesToArray())) && $find->$field !== $value) {
           $find->$field = $value;
         }
       }
