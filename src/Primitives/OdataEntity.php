@@ -5,6 +5,7 @@ namespace LexxSoft\odata\Primitives;
 
 use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Hash;
 use LexxSoft\odata\Exceptions\OdataModelIsNotRestableException;
 use LexxSoft\odata\Exceptions\OdataModelNotExistException;
 use LexxSoft\odata\Exceptions\OdataTryCallControllerException;
@@ -275,6 +276,10 @@ class OdataEntity
     $data = json_decode(request()->getContent(), true);
     $keyField = $this->oModel->getKeyName();
 
+    if(isset($data->password)){
+      $data->password = Hash::make($data->password);
+    }
+
     // sync data
     $aRelated = $this->extractRelationsFromInputData($data);
 
@@ -311,6 +316,9 @@ class OdataEntity
     $isValid = $this->oModel->validateObject();
     if ($isValid) {
       foreach ($data as $field => $value) {
+        if($field == 'password'){
+          $value = Hash::make($value);
+        }
         if (in_array($field, array_keys($find->attributesToArray())) && $find->$field !== $value) {
           $find->$field = $value;
         }

@@ -181,3 +181,6 @@ To delete data permanently, use `$force` query parameter.
 ```http request
 DELETE /odata/role(2)?$force=true
 ```
+
+## Save passwords
+To save password as Laravel Hash in database, you shoud send `password` field with password content to `POST` or `PUT` request.
