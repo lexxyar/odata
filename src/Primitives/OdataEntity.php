@@ -242,6 +242,11 @@ class OdataEntity
       $queryBuilder->with(OdataRequest::getInstance()->expand);
     }
 
+    // select
+    if(sizeof(OdataRequest::getInstance()->select) > 0){
+      $queryBuilder->select(OdataRequest::getInstance()->select);
+    }
+
     if ($this->key !== null) {
       $result = $queryBuilder->first();
     } else {

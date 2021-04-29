@@ -55,6 +55,11 @@ class OdataRequest
   public $force = false;
 
   /**
+   * @var array
+   */
+  public $select = [];
+
+  /**
    * Возвращает инстанцию класса
    * @return OdataRequest
    */
@@ -96,6 +101,9 @@ class OdataRequest
     }
     if (isset($queryParams['$force'])) {
       $this->force = true;
+    }
+    if (isset($queryParams['$select'])) {
+      $this->parseSelect($queryParams['$select']);
     }
   }
 
@@ -163,5 +171,17 @@ class OdataRequest
   private function parseOffset($sOffset)
   {
     $this->offset = $sOffset;
+  }
+
+  /**
+   * Парсинг $select
+   * @param $sSelect
+   */
+  private function parseSelect($sSelect){
+    $this->select = [];
+    $a = explode(',', $sSelect);
+    foreach ($a as $item) {
+      $this->select[] = trim($item);
+    }
   }
 }

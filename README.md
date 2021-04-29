@@ -107,7 +107,7 @@ If some logic should return some error, you must `throw \Exception`. This will g
       -[x] Simple expand (i.e.`$expand=products`)
       -[ ] Deep expand (i.e. `$expand=products/supplier`)
     -[x] `$format` (JSON only supported)
-    -[ ] `$select`
+    -[X] `$select`
     -[ ] `$inlinecount`
   -[ ] Custom query options (i.e. `/odata/products?x=y`)
 -[ ] Middleware routes (current is `auth:api`)
