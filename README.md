@@ -21,7 +21,13 @@
 ```shell script
 composer require lexxsoft/odata
 ```
->After installation all routes as `/odata/*` will be accessible via auth:api middleware
+>After installation all routes as `/odata/*` will be accessible
+
+>__Note__: `/odata/*` routes use `auth:api` middleware. To override this, call command
+>```shell script
+>php artisan vendor:publish --provider=LexxSoft\odata\OdataServiceProvider
+>``` 
+>After that `config/odata.php` file will appear, and you could change `routes_middleware` parameter as you want.
 
 ## Update model requirements 
 To make model as OData entity, you must use `IsRestable` trait.
