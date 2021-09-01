@@ -5,7 +5,9 @@ namespace LexxSoft\odata\Primitives;
 
 use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use LexxSoft\odata\Exceptions\OdataModelIsNotRestableException;
 use LexxSoft\odata\Exceptions\OdataModelNotExistException;
 use LexxSoft\odata\Exceptions\OdataTryCallControllerException;
@@ -14,6 +16,7 @@ use LexxSoft\odata\Http\OdataOrder;
 use LexxSoft\odata\Http\OdataRequest;
 use Illuminate\Database\Eloquent\Model;
 use stdClass;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Class OdataEntity
@@ -91,6 +94,9 @@ class OdataEntity
     // Определяем имя метода относительно типа зароса
     if (request()->getMethod() === 'POST') {
       $this->methodName = 'CreateEntity';
+      if (request()->files->count() > 0) {
+        $this->methodName = 'UploadFile';
+      }
     } elseif (request()->getMethod() === 'PUT') {
       $this->methodName = 'UpdateEntity';
     } elseif (request()->getMethod() === 'DELETE') {
@@ -194,6 +200,10 @@ class OdataEntity
     if ($this->methodName == 'DeleteEntity') {
       return $this->dynamicDeleteData();
     }
+
+    if ($this->methodName == 'UploadFile') {
+      return $this->dynamicUploadFile();
+    }
     return [];
   }
 
@@ -207,9 +217,9 @@ class OdataEntity
 
     // Check on SoftDelete
     if (in_array(SoftDeletes::class, class_uses($this->oModel))) {
-      if (OdataRequest::getInstance()->force){
+      if (OdataRequest::getInstance()->force) {
 //        $queryBuilder->withTrashed();
-      }else {
+      } else {
         $queryBuilder->whereNull('deleted_at');
       }
     }
@@ -243,7 +253,7 @@ class OdataEntity
     }
 
     // select
-    if(sizeof(OdataRequest::getInstance()->select) > 0){
+    if (sizeof(OdataRequest::getInstance()->select) > 0) {
       $queryBuilder->select(OdataRequest::getInstance()->select);
     }
 
@@ -273,15 +283,18 @@ class OdataEntity
 
   /**
    * Динамическое создание данных
+   * @param array|null $data
    * @return Model
    * @noinspection PhpUndefinedMethodInspection
    */
-  private function dynamicCreateData()
+  private function dynamicCreateData($data = null)
   {
-    $data = json_decode(request()->getContent(), true);
+    if ($data === null) {
+      $data = json_decode(request()->getContent(), true);
+    }
     $keyField = $this->oModel->getKeyName();
 
-    if(isset($data->password)){
+    if (isset($data->password)) {
       $data->password = Hash::make($data->password);
     }
 
@@ -303,25 +316,27 @@ class OdataEntity
 
   /**
    * Динамическое обновление данных
+   * @param array|null $data
    * @return Model
    * @noinspection PhpUndefinedMethodInspection
    */
-  private function dynamicUpdateData()
+  private function dynamicUpdateData($data = null)
   {
-    $data = json_decode(request()->getContent(), true);
+    if ($data === null) {
+      $data = json_decode(request()->getContent(), true);
+    }
     $keyField = $this->oModel->getKeyName();
-    $id = array_key_exists($keyField, $data)?$data[$keyField]:$this->key;
+    $id = array_key_exists($keyField, $data) ? $data[$keyField] : $this->key;
     $find = $this->oModel->findOrFail($id);
 
     // check relation fields
     $aRelated = $this->extractRelationsFromInputData($data);
 
-
     $this->oModel->fill($data);
     $isValid = $this->oModel->validateObject();
     if ($isValid) {
       foreach ($data as $field => $value) {
-        if($field == 'password'){
+        if ($field == 'password') {
           $value = Hash::make($value);
         }
         if (in_array($field, array_keys($find->attributesToArray())) && $find->$field !== $value) {
@@ -351,10 +366,15 @@ class OdataEntity
       throw new Exception('Key not set');
     }
 
-    if (OdataRequest::getInstance()->force){
+    if (OdataRequest::getInstance()->force) {
       $this->oModel->where($this->oModel->getKeyName(), '=', $this->key)->forceDelete();
-    }else {
+    } else {
       $this->oModel->where($this->oModel->getKeyName(), '=', $this->key)->delete();
+    }
+
+    if (isset($this->oModel->isFile) && $this->oModel->isFile === true) {
+      $config = Config::get('odata');
+      Storage::delete($config['upload_dir'] . '/' . $this->oModel->getFilename($this->key));
     }
 
     $res = new stdClass();
@@ -438,5 +458,40 @@ class OdataEntity
       $syncField = ucfirst($relation->field);
       call_user_func([$find, $syncField])->sync($relation->values);
     }
+  }
+
+  private function dynamicUploadFile()
+  {
+    foreach (request()->files->all() as $inputName => $file) {
+      if ($file instanceof UploadedFile) {
+        $tmp = explode('.', $file->getClientOriginalName());
+        array_pop($tmp);
+        $fileTitle = implode('.', $tmp);
+
+        $data = [];
+        $data['name'] = $fileTitle;
+        $data['ext'] = $file->getClientOriginalExtension();;
+        $data['mime'] = $file->getClientMimeType();
+
+        $request = request()->request->all();
+        unset($request['name'], $request['ext'], $request['mime']);
+        $data = array_merge($data, $request);
+
+        if (!$this->key) {
+          $oDbObj = $this->dynamicCreateData($data);
+        } else {
+          $oDbObj = $this->dynamicUpdateData($data);
+        }
+
+        $config = Config::get('odata');
+        request()->file($inputName)->storeAs($config['upload_dir'], $oDbObj->isFile ? $oDbObj->getFilename() : $oDbObj->id);
+
+//        dd(request()->request);
+      }
+    }
+
+    $res = new stdClass();
+    $res->status = 'success';
+    return get_object_vars($res);
   }
 }
