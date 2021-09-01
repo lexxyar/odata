@@ -25,11 +25,6 @@ class OdataEntityDescription
      */
     private $modelName;
 
-//    /**
-//     * @var array
-//     */
-//    private $fields;
-
     /**
      * @var \Illuminate\Database\Eloquent\Model
      */
@@ -49,8 +44,6 @@ class OdataEntityDescription
     public function getFields(): array
     {
         return $this->oModel->getFields();
-//        return $this->oModel->describeFields();
-//        return $this->fields;
     }
 
     /**
@@ -76,9 +69,6 @@ class OdataEntityDescription
         $this->modelName = $modelNamespace . $sModelFileName;
         $this->entityName = strtolower($sModelFileName);
         $this->oModel = OdataEntity::checkModel($this->modelName);
-
-//        $this->describeFields();
-//        $this->fields =
     }
 
     /**

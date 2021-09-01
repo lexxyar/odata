@@ -54,7 +54,6 @@ class Odata
     } catch (Exception $e) {
       $this->error = $e;
       throw $e;
-//            throw SyslemLog::Exception($e->getMessage(), $e->getCode());
     }
 
     try {
@@ -73,7 +72,6 @@ class Odata
     } catch (Exception $e) {
       $this->error = $e;
       throw $e;
-//            throw SyslemLog::Exception($e->getMessage(), $e->getCode());
     }
   }
 

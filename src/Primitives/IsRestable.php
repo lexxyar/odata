@@ -2,6 +2,7 @@
 
 namespace LexxSoft\odata\Primitives;
 
+use App\Models\Upload;
 use LexxSoft\odata\Db\OdataFieldDescription;
 use LexxSoft\odata\OdataHelper;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -95,7 +96,13 @@ trait IsRestable
 
         $modelStartsWith = substr($reflectionMethod->getDeclaringClass()->getName(), 0, strlen('App\\Models\\'));
         if ($modelStartsWith == 'App\\Models\\') {
-          $model = $model->first();
+          try {
+            $model = $model->firstOrFail();
+          } catch (\Exception $ex) {
+//            dd($ex);
+            continue;
+          }
+
           if (in_array($reflectionMethod->name, ['forceDelete', 'getFields'])) {
             continue;
           }
@@ -150,6 +157,38 @@ trait IsRestable
     foreach ($raw as $field) {
       $this->fields[] = new OdataFieldDescription($field);
     }
+
+    /*
+    // Добавим кастомные атрибуты (Аксессоры и мутаторы)
+    // Добавление по принципу наличия и Аксессора и Мутатора
+    // Если объявлен только один, то его в метаданные не выводим
+    $aAccessors = [];
+    $aMutators = [];
+    $re = '/(?<access>get|set)(?<name>\w+)Attribute/m';
+    foreach (get_class_methods($this) as $methodName) {
+      if (str_ends_with($methodName, 'Attribute')) {
+        preg_match_all($re, $methodName, $matches, PREG_SET_ORDER, 0);
+        if (sizeof($matches) > 0) {
+          if (str_starts_with($methodName, 'get')) {
+            $aAccessors[] = $matches[0]['name'];
+          } elseif (str_starts_with($methodName, 'set')) {
+            $aMutators[] = $matches[0]['name'];
+          }
+        }
+      }
+    }
+
+    $aIntersec = array_intersect($aAccessors, $aMutators);
+    foreach ($aIntersec as $item) {
+      $dbDescription = new \stdClass();
+      $dbDescription->Field = $item;
+      $dbDescription->Null = 'YES';
+      $dbDescription->Key = '';
+      $dbDescription->Default = '';
+      $dbDescription->Type = 'TEXT';
+      $this->fields[] = new OdataFieldDescription($dbDescription);
+    }
+*/
   }
 
   /**

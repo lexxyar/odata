@@ -9,6 +9,14 @@
     - [Controller methods](#controller-methods)
     - [Executing default data logic in controllers methods](#executing-default-data-logic-in-controllers-methods)
     - [Returning controller result](#returning-controller-result)
+- [Working with files](#Working with files)
+    - [Upload files](#upload-files)
+        - [Create new file](#create-new-file)
+        - [Update file](#update-file)
+    - [Delete file](#delete-file)
+    - [Get file list](#get-file-list)
+    - [Download file](#download-file)
+    - [Database table obligatory fields](#database-table-obligatory-fields)
 - [OData features](#odata-features)
 - [Data manipulation](#data-manipulations)
     - [Reading data](#reading-data)
@@ -23,7 +31,7 @@ composer require lexxsoft/odata
 ```
 >After installation all routes as `/odata/*` will be accessible
 
->__Note__: `/odata/*` routes use `auth:api` middleware. To override this, call command
+>__Note__: `/odata/*` routes use `auth:api` middleware. To override this, run command
 >```shell script
 >php artisan vendor:publish --provider=LexxSoft\odata\OdataServiceProvider
 >``` 
@@ -48,9 +56,23 @@ Route::get('/{any}', function () {
 })->where('any', '^(?!(api|odata)).*');
 ```
 
+# Configuration
+OData package contain configuration, witch help to make your application more flexible. 
+To start, run command
+```shell script
+php artisan vendor:publish --provider=LexxSoft\odata\OdataServiceProvider
+``` 
+After that `config/odata.php` file will appear, and you could change default configuration.
+
+Parameter|Type|Description|Default value
+---|---|---|---
+routes_middleware|Array|Additional middleware for OData routes|`['auth:api']`
+upload_dir|String|Laravel Storage path for uploaded files|`uploads`
+
+
 # Customisation data selection
 ## Controller methods
-By default OData look for `GetEntity`, `GetEntitySet`, `CreateEntity` and `UpdateEntity` methods. It means, that you can simply create this method in according controller.    
+By default OData look for `GetEntity`, `GetEntitySet`, `CreateEntity`, `UpdateEntity` and `UploadFile` methods. It means, that you can simply create this method in your controller.    
 
 ## Executing default data logic in controllers methods
 If you need make some changes in selected data before responding, you can execute default logic of ODataEntity. For example:
@@ -76,6 +98,58 @@ Method should return two kinds of result:
 If you return some data, the result will be applied to `ODataDefaultResource`.
 ### Throw error
 If some logic should return some error, you must `throw \Exception`. This will generate `ODataErrorResource` response.   
+
+# Working with files
+## Upload files
+OData process use `UploadFile` method of custom controller. Also, you can use dynamic package method to upload file for bind model.
+Model mast use `IsFile` trait, to be able to make actions with files
+>Important note! Your database table must have fields, described [below](#table-obligatory-fields).
+>Also, you can pass additional data for table fields. Additional obligatory fields will **no effect**. 
+
+In result filename will be like `cust_aab3238922bcc25a6f606eb525ffdc56`
+
+### Create new file
+To upload new file use HTTP `POST` method **without any keys**. In this keys filename wil be generated as `cust_` prefix and `MD5` hash of database record ID.
+
+### Update file
+To update existing file, use HTTP `POST` method **with table key**
+
+## Delete file
+To delete record in database use HTTP `DELETE` method, as for simple REST model. As result, record will be deleted so as associated file in storage.
+
+## Get file list
+Because of using table for uploaded files, use HTTP `GET` request to get list of files, just like for simple OData entity.
+
+## Download file
+Downloading file content has own specific URL.
+Use URL template
+```http request
+GET <REST API URL>/<entity name>(<key>)/_file
+```
+Another words: use simple [reading data](#reading-data) request with key to get single record and add `/_file` to end of the request.
+```http request
+GET /odata/files(1)/_file
+```
+
+## Database table obligatory fields
+Field name|Laravel data type
+---|---
+id|id
+name|string
+ext|string
+mime|string
+
+Or just copy migration pattern bellow
+```php
+Schema::create('files', function (Blueprint $table) {
+  $table->id();
+  $table->string('name', 100);
+  $table->string('ext', 10);
+  $table->string('mime', 60);
+  $table->timestamps();
+});
+```
+
 
 # OData features
 -[x] Metadata
@@ -123,6 +197,11 @@ If some logic should return some error, you must `throw \Exception`. This will g
 To read data, use `GET` request. Also you can add parameters to your query from `OData features` section
 ```http request
 GET /odata/role?$top=5
+```
+
+Reading user with ID = 1 
+```http request
+GET /odata/user(1)
 ```
 
 ### Reading `SoftDelete` data
