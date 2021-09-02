@@ -185,7 +185,7 @@ Schema::create('files', function (Blueprint $table) {
       -[ ] NOT
     -[ ] `$expand`
       -[x] Simple expand (i.e.`$expand=products`)
-      -[ ] Deep expand (i.e. `$expand=products/supplier`)
+      -[x] Deep expand (i.e. `$expand=products/supplier`)
     -[x] `$format` (JSON only supported)
     -[X] `$select`
     -[ ] `$inlinecount`
@@ -221,7 +221,7 @@ PUT /odata/role(2)
 ```json
 {
     "id": 2,
-	"name":"User role"
+    "name":"User role"
 }
 ```   
 ### Updating relations

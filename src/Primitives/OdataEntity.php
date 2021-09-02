@@ -460,6 +460,11 @@ class OdataEntity
     }
   }
 
+  /**
+   * Динамическая загрузка файла
+   *
+   * @return array
+   */
   private function dynamicUploadFile()
   {
     foreach (request()->files->all() as $inputName => $file) {
@@ -484,9 +489,7 @@ class OdataEntity
         }
 
         $config = Config::get('odata');
-        request()->file($inputName)->storeAs($config['upload_dir'], $oDbObj->isFile ? $oDbObj->getFilename() : $oDbObj->id);
-
-//        dd(request()->request);
+        request()->file($inputName)->storeAs($config['upload_dir'], $oDbObj->isFile ? $oDbObj->getFilename() : 'cust_'.$oDbObj->getTable().'_'.$oDbObj->id);
       }
     }
 

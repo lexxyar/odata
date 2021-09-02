@@ -33,6 +33,6 @@ trait IsFile
       $key = $this->$keyField;
     }
 
-    return 'cust_' . md5($key);
+    return 'cust_' . md5($this->getTable().'_'.$key);
   }
 }
