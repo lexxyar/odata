@@ -9,7 +9,7 @@
     - [Controller methods](#controller-methods)
     - [Executing default data logic in controllers methods](#executing-default-data-logic-in-controllers-methods)
     - [Returning controller result](#returning-controller-result)
-- [Working with files](#Working with files)
+- [Working with files](#working-with-files)
     - [Upload files](#upload-files)
         - [Create new file](#create-new-file)
         - [Update file](#update-file)
@@ -33,7 +33,7 @@ composer require lexxsoft/odata
 
 >__Note__: `/odata/*` routes use `auth:api` middleware. To override this, run command
 >```shell script
->php artisan vendor:publish --provider=LexxSoft\odata\OdataServiceProvider
+>php artisan vendor:publish --provider="LexxSoft\odata\OdataServiceProvider"
 >``` 
 >After that `config/odata.php` file will appear, and you could change `routes_middleware` parameter as you want.
 
