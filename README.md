@@ -103,13 +103,13 @@ If some logic should return some error, you must `throw \Exception`. This will g
 ## Upload files
 OData process use `UploadFile` method of custom controller. Also, you can use dynamic package method to upload file for bind model.
 Model mast use `IsFile` trait, to be able to make actions with files
->Important note! Your database table must have fields, described [below](#table-obligatory-fields).
+>Important note! Your database table must have fields, described [below](#database-table-obligatory-fields).
 >Also, you can pass additional data for table fields. Additional obligatory fields will **no effect**. 
 
 In result filename will be like `cust_aab3238922bcc25a6f606eb525ffdc56`
 
 ### Create new file
-To upload new file use HTTP `POST` method **without any keys**. In this keys filename wil be generated as `cust_` prefix and `MD5` hash of database record ID.
+To upload new file use HTTP `POST` method **without any keys**. In this case filename wil be generated as `cust_` prefix and `MD5` hash of database record ID.
 
 ### Update file
 To update existing file, use HTTP `POST` method **with table key**
@@ -152,45 +152,48 @@ Schema::create('files', function (Blueprint $table) {
 
 
 # OData features
--[x] Metadata
--[x] CRUD
-  -[x] **C**reate
-  -[x] **R**ead
-  -[x] **U**pdate
-  -[x] **D**elete
--[x] OData Entity
--[ ] OData request
-  -[ ] Resource path
-    -[x] Simple request (i.e. `/odata/category`)
-    -[x] Count request (i.e. `/odata/category/$count`)
-    -[x] Request by key (i.e. `/odata/category(1)`)
-    -[ ] Single field value request (i.e. `/odata/category(1)/name`)
-    -[ ] Value request (i.e. `/odata/category(1)/name/$value`)
-    -[ ] Nested entity request (i.e. `/odata/category(1)/products`)
-    -[ ] Count nested entity (i.e. `/odata/category(1)/products/$count`)
-    -[ ] Deep nested entity (i.e. `/odata/category(1)/products(2)/supplier/address/city/$value`)
-  -[ ] System query options
-    -[x] `$orderby`
-    -[x] `$top`
-    -[x] `skip`
-    -[ ] `$filter`
-      -[x] EQ
-      -[x] NE
-      -[x] GT
-      -[x] GE
-      -[x] LT
-      -[x] LE
-      -[ ] AND
-      -[ ] OR
-      -[ ] NOT
-    -[ ] `$expand`
-      -[x] Simple expand (i.e.`$expand=products`)
-      -[x] Deep expand (i.e. `$expand=products/supplier`)
-    -[x] `$format` (JSON only supported)
-    -[X] `$select`
-    -[ ] `$inlinecount`
-  -[ ] Custom query options (i.e. `/odata/products?x=y`)
--[ ] Middleware routes (current is `auth:api`)
+- [x] Metadata
+- [x] CRUD
+  - [x] **C**reate
+  - [x] **R**ead
+  - [x] **U**pdate
+  - [x] **D**elete
+- [x] OData Entity
+- [ ] OData request
+  - [ ] Resource path
+    - [x] Simple request (i.e. `/odata/category`)
+    - [x] Count request (i.e. `/odata/category/$count`)
+    - [x] Request by key (i.e. `/odata/category(1)`)
+    - [ ] Single field value request (i.e. `/odata/category(1)/name`)
+    - [ ] Value request (i.e. `/odata/category(1)/name/$value`)
+    - [ ] Nested entity request (i.e. `/odata/category(1)/products`)
+    - [ ] Count nested entity (i.e. `/odata/category(1)/products/$count`)
+    - [ ] Deep nested entity (i.e. `/odata/category(1)/products(2)/supplier/address/city/$value`)
+  - [ ] System query options
+    - [x] `$orderby`
+    - [x] `$top`
+    - [x] `skip`
+    - [ ] `$filter`
+      - [x] EQ
+      - [x] NE
+      - [x] GT
+      - [x] GE
+      - [x] LT
+      - [x] LE
+      - [ ] AND
+      - [ ] OR
+      - [ ] NOT
+      - [X] substringof
+      - [X] endswith
+      - [X] startswith
+    - [ ] `$expand`
+      - [x] Simple expand (i.e.`$expand=products`)
+      - [x] Deep expand (i.e. `$expand=products/supplier`)
+    - [x] `$format` (JSON only supported)
+    - [X] `$select`
+    - [ ] `$inlinecount`
+  - [ ] Custom query options (i.e. `/odata/products?x=y`)
+- [X] Middleware routes (current is `auth:api`)
 
 # Data manipulations
 ## Reading data

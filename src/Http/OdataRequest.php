@@ -3,6 +3,8 @@
 
 namespace LexxSoft\odata\Http;
 
+use stdClass;
+
 /**
  * Class OdataRequest
  * @package LexxSoft\odata\Http
@@ -118,11 +120,60 @@ class OdataRequest
    */
   private function parseFilter(string $sFilterString)
   {
-    $re = '/(?<Filter>(?<Resource>[^ ]+?)\s(?<Operator>eq|ne|gt|ge|lt|le|)\s\'?(?<Value>.+?))\'?\s*(?:[^\']*$|\s+(?<Condition>:or|and|not))/m';
+//    $re = '/(?<Filter>(?<Field>[^ ]+?)\s(?<Operator>eq|ne|gt|ge|lt|le|)\s\'?(?<Value>.+?))\'?\s*(?:[^\']*$|\s+(?<Condition>:|or|and|not))/m';
+//    preg_match_all($re, $sFilterString, $matches, PREG_SET_ORDER, 0);
+//    dd($sFilterString, $matches);
+    $words = explode(' ', $sFilterString);
 
-    preg_match_all($re, $sFilterString, $matches, PREG_SET_ORDER, 0);
+    $quote = 0;
+    $text = '';
+    $stage = 0;
+    $matches = [];
+    $o = new stdClass();
+    $group = 0;
+    foreach ($words as $word) {
+      $text = trim(implode(' ', [$text, $word]));
+      $quoteCount = substr_count($word, "'");
+      $quote += $quoteCount;
+      if ($quote % 2 != 0) continue;
+
+      switch ($stage) {
+        case 0: // Field
+          if (str_starts_with($text, '(')) {
+            $group++;
+            $text = substr($text, 1);
+          }
+          $o = new stdClass();
+          $o->Field = $text;
+          $o->Group = $group;
+          $stage++;
+          $matches[] = $o;
+          break;
+        case 1: // Sign
+          if (in_array($text, explode(',', 'eq,ne,lt,le,gt,ge'))) {
+            $o->Operator = $text;
+            $stage++;
+          } else {
+            $o->Field .= $text;
+          }
+          break;
+        case 2: // Value
+          if (str_ends_with($text, ')')) {
+            $group--;
+            $text = substr($text, 0, -1);
+          }
+          $o->Value = $text;
+          $stage++;
+          break;
+        case 3: // Binary operation
+          $o->Condition = $text;
+          $stage = 0;
+          break;
+      }
+      $text = '';
+    }
     foreach ($matches as $match) {
-      $oFilter = new OdataFilter($match);
+      $oFilter = new OdataFilter((array)$match);
       $this->filter[] = $oFilter;
     }
   }

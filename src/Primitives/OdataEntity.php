@@ -442,7 +442,7 @@ class OdataEntity
   public static function dumpSql($oBuilder)
   {
     $addSlashes = $oBuilder->toSql();
-    $sql = vsprintf(str_replace(' ? ', ' % s', $addSlashes), $oBuilder->getBindings());
+    $sql = vsprintf(str_replace('?', ' %s', $addSlashes), $oBuilder->getBindings());
     dump($oBuilder->toSql(), $oBuilder->getBindings(), $sql);
   }
 
