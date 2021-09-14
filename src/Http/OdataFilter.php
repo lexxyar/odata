@@ -68,14 +68,7 @@ class OdataFilter
    */
   public function __construct($aMatch)
   {
-//    $this->sFilter = $aMatch['Filter'];
     $this->sField = $aMatch['Field'];
-    $this->sSign = strtoupper($aMatch['Operator']);
-    $this->sValue = $aMatch['Value'];
-    $this->bGroup = $aMatch['Group'];
-    if (str_starts_with($this->sValue, "'")){
-      $this->sValue = substr(substr($this->sValue, 1), 0,-1);
-    }
 
     if (str_starts_with($this->sField, 'substringof') ||
       str_starts_with($this->sField, 'endswith') ||
@@ -98,6 +91,13 @@ class OdataFilter
         $this->sField = $match['Field'];
         $this->sValue = preg_replace($reReplace, $match['Value'], $sPattern);
         $this->sSign = self::_LIKE_;
+      }
+    }else{
+      $this->sSign = strtoupper($aMatch['Operator']);
+      $this->sValue = $aMatch['Value'];
+      $this->bGroup = $aMatch['Group'];
+      if (str_starts_with($this->sValue, "'")){
+        $this->sValue = substr(substr($this->sValue, 1), 0,-1);
       }
     }
 
