@@ -64,23 +64,23 @@ class OdataFilter
 
   /**
    * OdataFilter constructor.
-   * @param $aMatch
+   * @param OdataFilterStructure $oMatch
    */
-  public function __construct($aMatch)
+  public function __construct($oMatch)
   {
-    $this->sField = $aMatch['Field'];
+    $this->sField = $oMatch->field;
 
     if (str_starts_with($this->sField, 'substringof') ||
       str_starts_with($this->sField, 'endswith') ||
       str_starts_with($this->sField, 'startswith')) {
 
       $sPattern = "{value}";
-      if (str_starts_with($this->sField, 'substringof')){
-        $sPattern = "%".$sPattern."%";
-      }elseif (str_starts_with($this->sField, 'endswith')){
-        $sPattern = "%".$sPattern;
-      }elseif (str_starts_with($this->sField, 'startswith')){
-        $sPattern = $sPattern."%";
+      if (str_starts_with($this->sField, 'substringof')) {
+        $sPattern = "%" . $sPattern . "%";
+      } elseif (str_starts_with($this->sField, 'endswith')) {
+        $sPattern = "%" . $sPattern;
+      } elseif (str_starts_with($this->sField, 'startswith')) {
+        $sPattern = $sPattern . "%";
       }
 
       $re = '/.+\((?<Field>.+),\s*\'?(?<Value>.+[^\'])\'?\)/m';
@@ -92,20 +92,16 @@ class OdataFilter
         $this->sValue = preg_replace($reReplace, $match['Value'], $sPattern);
         $this->sSign = self::_LIKE_;
       }
-    }else{
-      $this->sSign = strtoupper($aMatch['Operator']);
-      $this->sValue = $aMatch['Value'];
-      $this->bGroup = $aMatch['Group'];
-      if (str_starts_with($this->sValue, "'")){
-        $this->sValue = substr(substr($this->sValue, 1), 0,-1);
+    } else {
+      $this->sSign = strtoupper($oMatch->operator);
+      $this->sValue = $oMatch->value;
+      $this->bGroup = $oMatch->group;
+      if (str_starts_with($this->sValue, "'")) {
+        $this->sValue = substr(substr($this->sValue, 1), 0, -1);
       }
     }
 
-    if (isset($aMatch['Condition'])) {
-      $this->sCondition = strtolower($aMatch['Condition']);
-    } else {
-      $this->sCondition = strtolower('and');
-    }
+    $this->sCondition = strtolower($oMatch->condition);
   }
 
   /**
@@ -114,22 +110,15 @@ class OdataFilter
    */
   public function toArray(): array
   {
-    $aParts = [0 => '', 1 => '', 2 => ''];
+    $aParts = [0 => '', 1 => '', 2 => '', 3 => 'and'];
 
     if ($this->sTable !== '') {
       $aParts[0] = $this->sTable . '.';
     }
     $aParts[0] .= $this->sField;
-//    if ($this->sValue === 'null') {
-      $aParts[2] = $this->sValue;
-//    } else {
-//      if ($this->sSign === self::_CP_) {
-//        $aParts[2] = "%{$this->sValue}%";
-//      } else {
-//        $aParts[2] = $this->sValue;
-//      }
-//    }
     $aParts[1] = self::toSqlSign($this->sSign);
+    $aParts[2] = $this->sValue;
+    $aParts[3] = $this->sCondition;
     return $aParts;
   }
 

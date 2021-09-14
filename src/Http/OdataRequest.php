@@ -131,49 +131,62 @@ class OdataRequest
     $matches = [];
     $o = new stdClass();
     $group = 0;
+    $isFirst = true;
     foreach ($words as $word) {
       $text = trim(implode(' ', [$text, $word]));
       $quoteCount = substr_count($word, "'");
       $quote += $quoteCount;
       if ($quote % 2 != 0) continue;
 
+      if ($isFirst) {
+        $o = new OdataFilterStructure();
+        $matches[] = $o;
+        $stage++;
+      }
+
       switch ($stage) {
-        case 0: // Field
+        case 0: // Binary operation
+          $o = new OdataFilterStructure();
+          $matches[] = $o;
+          $o->condition = $text;
+          $stage++;
+          break;
+        case 1: // Field
           if (str_starts_with($text, '(')) {
             $group++;
             $text = substr($text, 1);
           }
-          $o = new stdClass();
-          $o->Field = $text;
-          $o->Group = $group;
+          $o->field = $text;
+          $o->group = $group;
           $stage++;
-          $matches[] = $o;
           break;
-        case 1: // Sign
+        case 2: // Sign
+//          dump($o);
           if (in_array($text, explode(',', 'eq,ne,lt,le,gt,ge'))) {
-            $o->Operator = $text;
+            $o->operator = $text;
             $stage++;
           } else {
-            $o->Field .= $text;
+            $o->field .= $text;
           }
           break;
-        case 2: // Value
+        case 3: // Value
           if (str_ends_with($text, ')')) {
             $group--;
             $text = substr($text, 0, -1);
           }
-          $o->Value = $text;
-          $stage++;
-          break;
-        case 3: // Binary operation
-          $o->Condition = $text;
+          $o->value = $text;
           $stage = 0;
           break;
+
       }
       $text = '';
+      if ($isFirst) {
+        $isFirst = false;
+      }
     }
+
     foreach ($matches as $match) {
-      $oFilter = new OdataFilter((array)$match);
+      $oFilter = new OdataFilter($match);
       $this->filter[] = $oFilter;
     }
   }
