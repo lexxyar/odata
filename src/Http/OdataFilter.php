@@ -83,7 +83,7 @@ class OdataFilter
         $sPattern = $sPattern . "%";
       }
 
-      $re = '/.+\((?<Field>.+),\s*\'?(?<Value>.+[^\'])\'?\)/m';
+      $re = '/.+\((?<Field>.+),\s*\'(?<Value>.+)\'\)/m';
       $reReplace = '/\{\S+\}/m';
 
       preg_match_all($re, $this->sField, $matches, PREG_SET_ORDER, 0);
