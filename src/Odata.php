@@ -71,7 +71,7 @@ class Odata
       }
     } catch (Exception $e) {
       $this->error = $e;
-      throw $e;
+//      throw $e;
     }
   }
 

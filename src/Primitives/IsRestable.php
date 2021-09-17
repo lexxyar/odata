@@ -42,6 +42,8 @@ trait IsRestable
    * Валидирование данных
    * @return bool
    * @throws \Exception
+   *
+   * @deprecated sins v. 0.3.5
    */
   public function validateObject()
   {
@@ -49,8 +51,8 @@ trait IsRestable
     $keyField = $this->getKeyName();
 
     // Проверка на обязательные поля
-    if (isset($this->required) && is_array($this->required)) {
-      foreach ($this->required as $field) {
+    if (isset($this->requiredFields) && is_array($this->requiredFields)) {
+      foreach ($this->requiredFields as $field) {
         if (!isset($this->$field)) {
           throw new \Exception('Fill `' . $field . '` field');
         }
@@ -61,8 +63,8 @@ trait IsRestable
     }
 
     // Проверка уникальности значений
-    if (isset($this->unique) && is_array($this->unique)) {
-      foreach ($this->unique as $field) {
+    if (isset($this->uniqueFields) && is_array($this->uniqueFields)) {
+      foreach ($this->uniqueFields as $field) {
         $value = null;
         if (isset($this->$field)) {
           $value = $this->$field;

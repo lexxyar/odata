@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use LexxSoft\odata\Exceptions\OdataModelIsNotRestableException;
 use LexxSoft\odata\Exceptions\OdataModelNotExistException;
 use LexxSoft\odata\Exceptions\OdataTryCallControllerException;
@@ -303,12 +304,18 @@ class OdataEntity
 
     unset($data->$keyField);
     $this->oModel->fill($data);
-    $isValid = $this->oModel->validateObject();
+//    $isValid = $this->oModel->validateObject();
+
+    $oValidator = Validator::make($data, $this->oModel->validationRules);
+    $isValid = $oValidator->errors()->count() == 0;
+
     if ($isValid) {
       $this->oModel = $this->oModel->create($this->oModel->toArray());
 
       // Sync pivot table
       $this->syncRelations($this->oModel, $aRelated);
+    }else{
+      throw new Exception('json:' . $oValidator->errors()->toJson());
     }
 
     return $this->oModel;
@@ -333,7 +340,11 @@ class OdataEntity
     $aRelated = $this->extractRelationsFromInputData($data);
 
     $this->oModel->fill($data);
-    $isValid = $this->oModel->validateObject();
+//    $isValid = $this->oModel->validateObject();
+
+    $oValidator = Validator::make($data, $this->oModel->validationRules);
+    $isValid = $oValidator->errors()->count() == 0;
+
     if ($isValid) {
       foreach ($data as $field => $value) {
         if ($field == 'password') {
@@ -349,6 +360,8 @@ class OdataEntity
       $this->syncRelations($find, $aRelated);
 
       $this->oModel = $find;
+    }else{
+      throw new Exception('json:' . $oValidator->errors()->toJson());
     }
 
     return $this->oModel;

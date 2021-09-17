@@ -23,6 +23,8 @@
     - [Updating data](#updating-data)
     - [Creating data](#creating-data)
     - [Deleting data](#deleting-data)
+- [Data validation](#data-validation)
+    - [How to define rules](#how-to-define-rules)
 
 # Installation
 ## Setup
@@ -68,7 +70,6 @@ Parameter|Type|Description|Default value
 ---|---|---|---
 routes_middleware|Array|Additional middleware for OData routes|`['auth:api']`
 upload_dir|String|Laravel Storage path for uploaded files|`uploads`
-
 
 # Customisation data selection
 ## Controller methods
@@ -149,7 +150,6 @@ Schema::create('files', function (Blueprint $table) {
   $table->timestamps();
 });
 ```
-
 
 # OData features
 - [x] Metadata
@@ -272,3 +272,23 @@ DELETE /odata/role(2)?$force=true
 
 ## Save passwords
 To save password as Laravel Hash in database, you shoud send `password` field with password content to `POST` or `PUT` request.
+
+# Data validation
+Data validation use standard Laravel `Illuminate\Support\Facades\Validator` with its rules. 
+There is one moment in **error** response - error response message will contain format and 
+validation response, as shown in example below:
+```json
+{
+  "error": {
+    "code": 0,
+    "message": "json:{\"email\":[\"validation.required\"]}"
+  }
+}
+```  
+In this case format is `json` then `:`(column) separator and JSON body
+
+## How to define rules
+When you use `IsRestable` trait, you can define `public` variable `$validationRules`, witch contain
+validation rules like in [Laravel article](https://laravel.com/docs/8.x/validation). Available rules are 
+[documented here](#https://laravel.com/docs/8.x/validation#available-validation-rules)
+ 
