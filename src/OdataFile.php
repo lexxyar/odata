@@ -69,4 +69,19 @@ class OdataFile
     $config = \Illuminate\Support\Facades\Config::get('odata');
     return Storage::download($config['upload_dir'].'/'.$this->filename, $this->clietnFilename);
   }
+
+  /**
+   * Ответ: Файл в кодировке Base64
+   *
+   * @return ODataErrorResource|stream
+   */
+  public function response64()
+  {
+    if ($this->error !== null) {
+      return new ODataErrorResource($this->error);
+    }
+
+    $config = \Illuminate\Support\Facades\Config::get('odata');
+    return base64_encode(Storage::get($config['upload_dir'].'/'.$this->filename, $this->clietnFilename));
+  }
 }

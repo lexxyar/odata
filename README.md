@@ -132,6 +132,13 @@ Another words: use simple [reading data](#reading-data) request with key to get 
 GET /odata/files(1)/_file
 ```
 
+## Get Base64 file content
+Getting file content as Base64 encoded string has own specific URL.
+Use URL template
+```http request
+GET <REST API URL>/<entity name>(<key>)/_file64
+```
+
 ## Database table obligatory fields
 Field name|Laravel data type
 ---|---

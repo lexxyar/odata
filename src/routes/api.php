@@ -11,6 +11,10 @@ Route::middleware($config['routes_middleware'])->prefix('odata')->group(function
     $odata = new \LexxSoft\odata\OdataFile();
     return $odata->response();
   })->where('any', '^(?!(api|odata)).*$');
+  Route::get('/{any}/_file64', function () {
+    $odata = new \LexxSoft\odata\OdataFile();
+    return $odata->response64();
+  })->where('any', '^(?!(api|odata)).*$');
   Route::get('/{any}', function () {
     $odata = new Odata();
     return $odata->response();
