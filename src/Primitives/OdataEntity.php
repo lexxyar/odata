@@ -490,9 +490,10 @@ class OdataEntity
         $data['name'] = $fileTitle;
         $data['ext'] = $file->getClientOriginalExtension();;
         $data['mime'] = $file->getClientMimeType();
+        $data['size'] = $file->getSize();
 
         $request = request()->request->all();
-        unset($request['name'], $request['ext'], $request['mime']);
+        unset($request['name'], $request['ext'], $request['mime'], $request['size']);
         $data = array_merge($data, $request);
 
         if (!$this->key) {

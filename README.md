@@ -146,6 +146,7 @@ id|id
 name|string
 ext|string
 mime|string
+size|bigInteger
 
 Or just copy migration pattern bellow
 ```php
@@ -154,6 +155,7 @@ Schema::create('files', function (Blueprint $table) {
   $table->string('name', 100);
   $table->string('ext', 10);
   $table->string('mime', 60);
+  $table->bigInteger('size')->unsigned()->default(0);
   $table->timestamps();
 });
 ```
