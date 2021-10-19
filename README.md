@@ -300,4 +300,14 @@ In this case format is `json` then `:`(column) separator and JSON body
 When you use `IsRestable` trait, you can define `public` variable `$validationRules`, witch contain
 validation rules like in [Laravel article](https://laravel.com/docs/8.x/validation). Available rules are 
 [documented here](#https://laravel.com/docs/8.x/validation#available-validation-rules)
+
+Also you can use parameters in validation conditions. Parameter has mask `${<model field>}`. 
+For example, if you need to use value from model `ID` field, you must type `${id}`. 
+In example below, rule check unique email, excluding id of current record:
+```php
+public $validationRules = [
+    'email' => 'required|email|unique:users,email,${id}',
+    ...
+  ];
+```
  

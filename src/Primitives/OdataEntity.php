@@ -306,7 +306,10 @@ class OdataEntity
     $this->oModel->fill($data);
 //    $isValid = $this->oModel->validateObject();
 
-    $oValidator = Validator::make($data, $this->oModel->validationRules);
+    $aRules = $this->oModel->validationRules;
+    $this->substituteValidationParameters($aRules);
+
+    $oValidator = Validator::make($data, $aRules);
     $isValid = $oValidator->errors()->count() == 0;
 
     if ($isValid) {
@@ -340,9 +343,11 @@ class OdataEntity
     $aRelated = $this->extractRelationsFromInputData($data);
 
     $this->oModel->fill($data);
-//    $isValid = $this->oModel->validateObject();
 
-    $oValidator = Validator::make($data, $this->oModel->validationRules);
+    $aRules = $this->oModel->validationRules;
+    $this->substituteValidationParameters($aRules);
+
+    $oValidator = Validator::make($data, $aRules);
     $isValid = $oValidator->errors()->count() == 0;
 
     if ($isValid) {
@@ -365,6 +370,51 @@ class OdataEntity
     }
 
     return $this->oModel;
+  }
+
+  /**
+   * Заменяет параметры вида ${id} в правилах валидации на значение в поделе данных
+   *
+   * @param array $aRules Правила валидации
+   */
+  private function substituteValidationParameters(Array &$aRules){
+    array_walk($aRules, function (&$item, $key) {
+      // Разбиваем строку на массив
+      $rules = is_array($item) ? $item : explode('|', $item);
+      array_walk($rules, function (&$rule, $index) {
+        $rp = \Illuminate\Validation\ValidationRuleParser::parse($rule);
+
+        // Проверяем, есть ли условия
+        if (isset($rp[1]) && sizeof($rp[1]) > 0) {
+          $cond = $rp[1];
+
+          // Ищем параметры и заменяем на значения из модели
+          array_walk($cond, function (&$itm, $idx) {
+            if (str_starts_with($itm, '${')) {
+              $field = substr($itm, 2, strlen($itm) - strlen('${') - 1);
+              $itm = $this->oModel[$field];
+            }
+          });
+
+          // Склеиваем условия в строку через запятую
+          $rp[1] = implode(',', $cond);
+        }
+
+        if (is_array($rp[1])) {
+          // Удалим пустые массивы условий
+          if (sizeof($rp[1]) == 0) {
+            unset($rp[1]);
+          } // Остальные склеим через запятую
+          else {
+            $rp[1] = implode(',', $cond);
+          }
+        }
+
+        // Составим строку правила, склеив с условиями через двоеточие
+        $rule = implode(':', $rp);
+      });
+      $item = $rules;
+    });
   }
 
   /**
