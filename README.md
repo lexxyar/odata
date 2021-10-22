@@ -23,6 +23,7 @@
     - [Updating data](#updating-data)
     - [Creating data](#creating-data)
     - [Deleting data](#deleting-data)
+    - [Bunch data action](#bunch-data-action)
 - [Data validation](#data-validation)
     - [How to define rules](#how-to-define-rules)
 
@@ -73,7 +74,9 @@ upload_dir|String|Laravel Storage path for uploaded files|`uploads`
 
 # Customisation data selection
 ## Controller methods
-By default OData look for `GetEntity`, `GetEntitySet`, `CreateEntity`, `UpdateEntity` and `UploadFile` methods. It means, that you can simply create this method in your controller.    
+By default OData looks for `GetEntity`, `GetEntitySet`, `CreateEntity`, `UpdateEntity`, `DeleteEntity` and `UploadFile` methods. 
+Also OData looks for `CreateMassEntity`, `UpdateMassEntity`and `DeleteMassEntity` methods. 
+It means, that you can simply create this method in your controller.    
 
 ## Executing default data logic in controllers methods
 If you need make some changes in selected data before responding, you can execute default logic of ODataEntity. For example:
@@ -281,6 +284,20 @@ DELETE /odata/role(2)?$force=true
 
 ## Save passwords
 To save password as Laravel Hash in database, you shoud send `password` field with password content to `POST` or `PUT` request.
+
+## Bunch data action
+Core support bunch data action. Other words: you can `create`/`update`/`delete` few records, using only one request, by passing array of data 
+```http request
+POST /odata/permission
+```
+```json
+[
+  {"subject": "user", "action": "create"},
+  {"subject": "user", "action": "update"},
+  {"subject": "user", "action": "delete"}
+]
+```
+
 
 # Data validation
 Data validation use standard Laravel `Illuminate\Support\Facades\Validator` with its rules. 
