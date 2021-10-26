@@ -248,4 +248,40 @@ class OdataRequest
       $this->select[] = trim($item);
     }
   }
+
+  /**
+   * Возвращает ключ для сущности из запроса
+   * @return mixed|null
+   *
+   * @since 0.6.0
+   */
+  public function getEntityKey()
+  {
+    $entityValue = $this->requestPathParts[0]; // имя сущности или набора
+
+    // Достаем имя сущности и ключ
+    $re = '/(?<entity>.[^(]+)(?<containKey>\(?(?<key>.+)\))?/m';
+    preg_match_all($re, $entityValue, $matches, PREG_SET_ORDER, 0);
+    $entityKey = isset($matches[0]['key']) ? $matches[0]['key'] : null;
+
+    return $entityKey;
+  }
+
+  /**
+   * Возвращает имя сущности из запроса
+   * @return mixed
+   *
+   * @since 0.6.0
+   */
+  public function getEntityName()
+  {
+    $entityValue = $this->requestPathParts[0]; // имя сущности или набора
+
+    // Достаем имя сущности и ключ
+    $re = '/(?<entity>.[^(]+)(?<containKey>\(?(?<key>.+)\))?/m';
+    preg_match_all($re, $entityValue, $matches, PREG_SET_ORDER, 0);
+    $entityKey = isset($matches[0]['key']) ? $matches[0]['key'] : null;
+
+    return $matches[0]['entity'];
+  }
 }

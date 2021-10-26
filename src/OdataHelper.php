@@ -4,6 +4,10 @@
 namespace LexxSoft\odata;
 
 
+use Illuminate\Support\Collection;
+use LexxSoft\odata\Http\OdataFilter;
+use LexxSoft\odata\Http\OdataRequest;
+
 class OdataHelper
 {
     public static function toValue($val): string
@@ -96,4 +100,109 @@ class OdataHelper
 //        if (array() === $arr) return false;
 //        return array_keys($arr) !== range(0, count($arr) - 1);
 //    }
+
+  /**
+   * Применяет OdataFilter к коллекции
+   * @use OdataRequest filter
+   *
+   * @param Collection $oCollection
+   * @return Collection
+   *
+   * @since 0.6.0
+   */
+  public static function filterCollection(Collection &$oCollection)
+  {
+    $oRequest = OdataRequest::getInstance();
+    if (sizeof($oRequest->filter) > 0) {
+      $oCollection = $oCollection->filter(function ($value, $key) use ($oRequest) {
+        foreach ($oRequest->filter as $oFilter) {
+          if ($oFilter instanceof OdataFilter) {
+            switch ($oFilter->sSign) {
+//              case OdataFilter::_EQ_:
+//                return $value[$oFilter->sField] == $oFilter->sValue;
+              case OdataFilter::_GE_:
+                return $value[$oFilter->sField] >= $oFilter->sValue;
+              case OdataFilter::_GT_:
+                return $value[$oFilter->sField] > $oFilter->sValue;
+              case OdataFilter::_LE_:
+                return $value[$oFilter->sField] <= $oFilter->sValue;
+              case OdataFilter::_LT_:
+                return $value[$oFilter->sField] < $oFilter->sValue;
+              default:
+                return $value[$oFilter->sField] == $oFilter->sValue;
+            }
+          }
+        }
+      });
+    }
+    return $oCollection;
+  }
+
+  /**
+   * Сдвигает/выкидывает первые записи коллекции
+   * @use OdataRequest offset
+   *
+   * @param Collection $oCollection Коллекция
+   * @return Collection Измененная коллекция
+   *
+   * @since 0.6.0
+   */
+  public static function skipCollection(Collection &$oCollection)
+  {
+    if($oCollection->count() == 0) return $oCollection;
+    $oRequest = OdataRequest::getInstance();
+    if ($oRequest->offset > 0){
+      $oCollection = $oCollection->skip($oRequest->offset);
+    }
+    return $oCollection;
+  }
+
+  /**
+   * Сдвигает/выкидывает первые записи коллекции
+   * @alias skipCollection
+   * @use OdataRequest offset
+   *
+   * @param Collection $oCollection Коллекция
+   * @return Collection Измененная коллекция
+   *
+   * @since 0.6.0
+   */
+  public static function offsetCollection(Collection &$oCollection)
+  {
+    return self::skipCollection($oCollection);
+  }
+
+  /**
+   * Выбирает определенное количество значений коллекции
+   * @use OdataRequest limit
+   *
+   * @param Collection $oCollection Коллекция
+   * @return Collection Измененная коллекция
+   *
+   * @since 0.6.0
+   */
+  public static function limitCollection(Collection &$oCollection)
+  {
+    if($oCollection->count() == 0) return $oCollection;
+    $oRequest = OdataRequest::getInstance();
+    if ($oRequest->limit > 0){
+      $oCollection = $oCollection->slice(0, $oRequest->limit);
+    }
+    return $oCollection;
+  }
+
+  /**
+   * Выбирает определенное количество значений коллекции
+   * @alias limitCollection
+   * @use OdataRequest limit
+   *
+   * @param Collection $oCollection Коллекция
+   * @return Collection Измененная коллекция
+   *
+   * @since 0.6.0
+   */
+  public static function topCollection(Collection &$oCollection)
+  {
+    return self::limitCollection($oCollection);
+  }
 }

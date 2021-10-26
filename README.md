@@ -26,6 +26,7 @@
     - [Bunch data action](#bunch-data-action)
 - [Data validation](#data-validation)
     - [How to define rules](#how-to-define-rules)
+- [OData helpers](#odata-helpers)
 
 # Installation
 ## Setup
@@ -328,3 +329,11 @@ public $validationRules = [
   ];
 ```
  
+# OData helpers
+OData helper (class: `\LexxSoft\odata\OdataHelper`) has few methods for applying `limit`, `offset` anf `filter` from OData request to collection
+
+Method name|Alias|Parameters
+---|---|---
+limitCollection|topCollection|&Collection
+skipCollection|offsetCollection|&Collection 
+filterCollection| |&Collection

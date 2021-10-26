@@ -24,16 +24,19 @@ class OdataFile
 
   public function __construct()
   {
-    $entityValue = OdataRequest::getInstance()->requestPathParts[0];
+//    $entityValue = OdataRequest::getInstance()->requestPathParts[0];
+//
+//    // Достаем имя сущности и ключ
+//    $re = '/(?<entity>.[^(]+)(?<containKey>\(?(?<key>.+)\))?/m';
+//    preg_match_all($re, $entityValue, $matches, PREG_SET_ORDER, 0);
+//    $entityKey = isset($matches[0]['key']) ? $matches[0]['key'] : null;
 
-    // Достаем имя сущности и ключ
-    $re = '/(?<entity>.[^(]+)(?<containKey>\(?(?<key>.+)\))?/m';
-    preg_match_all($re, $entityValue, $matches, PREG_SET_ORDER, 0);
-    $entityKey = isset($matches[0]['key']) ? $matches[0]['key'] : null;
+    $entityName = OdataRequest::getInstance()->getEntityName();
+    $entityKey = OdataRequest::getInstance()->getEntityKey();
 
     try {
       // Создаем экземпляр REST сущности
-      $restEntity = new OdataEntity($matches[0]['entity'], $entityKey);
+      $this->restEntity = new OdataEntity($entityName, $entityKey);
     } catch (\Exception $e) {
       $this->error = $e;
       throw $e;
