@@ -477,6 +477,7 @@ class OdataEntity
     }
 
     $res = new stdClass();
+    $res->id = $this->key;
     $res->status = 'success';
     return get_object_vars($res);
   }
