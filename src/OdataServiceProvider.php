@@ -8,7 +8,7 @@ class OdataServiceProvider extends ServiceProvider
 {
   public function boot()
   {
-    $source = __DIR__ . '/../config/odata.php';
+    $source = __DIR__ . '/config/odata.php';
     $this->publishes([
       $source => config_path('odata.php'),
     ]);
@@ -19,7 +19,7 @@ class OdataServiceProvider extends ServiceProvider
 
   public function register()
   {
-    $this->mergeConfigFrom(__DIR__ . '/../config/odata.php', 'odata');
+    $this->mergeConfigFrom(__DIR__ . '/config/odata.php', 'odata');
     parent::register();
   }
 

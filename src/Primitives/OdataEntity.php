@@ -85,35 +85,38 @@ class OdataEntity
   public function __construct($entityName, $key = null)
   {
     $this->entityName = $entityName;
-    $this->isList = $key === null;
-    $this->key = $key;
-    $modelNamespace = 'App\\Models\\';
-    $controllerNamespace = 'App\\Http\\Controllers\\Api\\';
-    $this->modelName = $modelNamespace . ucfirst(strtolower($this->entityName));
-    $this->controllerName = $controllerNamespace . ucfirst(strtolower($this->entityName)) . 'Controller';
-    $this->methodName = '';
-
-    $data = json_decode(request()->getContent(), true);
-    $isMass = $this->isMultidimensional($data);
-
-    // Определяем имя метода относительно типа зароса
-    if (request()->getMethod() === 'POST') {
-      $this->methodName = $isMass ? 'CreateMassEntity' : 'CreateEntity';
-      if (request()->files->count() > 0) {
-        $this->methodName = 'UploadFile';
-      }
-    } elseif (request()->getMethod() === 'PUT') {
-      $this->methodName = $isMass ? 'UpdateMassEntity' : 'UpdateEntity';
-    } elseif (request()->getMethod() === 'DELETE') {
-      $this->methodName = $isMass ? 'DeleteMassEntity' : 'DeleteEntity';
-    } elseif (request()->getMethod() === 'GET') {
-      $this->methodName = $this->isList ? 'GetEntitySet' : 'GetEntity';
-    }
 
     // This is metadata
     if ($this->entityName == urlencode('$metadata') || $this->entityName == '$metadata') {
       $this->isMetadata = true;
     } else {
+      $modelDescription = OdataService::getEntityModelByEntityName($entityName);
+      $this->isList = $key === null;
+      $this->key = $key;
+      $modelNamespace = $modelDescription->getNamespace() . '\\';
+      $pathParts = explode('\\', $modelNamespace);
+      array_pop($pathParts);
+      $controllerNamespace = implode('\\', $pathParts) . '\\Http\\Controllers\\Api\\';
+      $this->modelName = $modelNamespace . ucfirst(strtolower($this->entityName));
+      $this->controllerName = $controllerNamespace . ucfirst(strtolower($this->entityName)) . 'Controller';
+      $this->methodName = '';
+
+      $data = json_decode(request()->getContent(), true);
+      $isMass = $this->isMultidimensional($data);
+
+      // Определяем имя метода относительно типа зароса
+      if (request()->getMethod() === 'POST') {
+        $this->methodName = $isMass ? 'CreateMassEntity' : 'CreateEntity';
+        if (request()->files->count() > 0) {
+          $this->methodName = 'UploadFile';
+        }
+      } elseif (request()->getMethod() === 'PUT') {
+        $this->methodName = $isMass ? 'UpdateMassEntity' : 'UpdateEntity';
+      } elseif (request()->getMethod() === 'DELETE') {
+        $this->methodName = $isMass ? 'DeleteMassEntity' : 'DeleteEntity';
+      } elseif (request()->getMethod() === 'GET') {
+        $this->methodName = $this->isList ? 'GetEntitySet' : 'GetEntity';
+      }
       $this->oModel = self::checkModel($this->modelName);
     }
   }

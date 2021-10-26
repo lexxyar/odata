@@ -2,5 +2,6 @@
 
 return [
   'routes_middleware' => ['auth:api'],
-  'upload_dir' => 'uploads'
+  'upload_dir' => 'uploads',
+  'components'=>[],
 ];

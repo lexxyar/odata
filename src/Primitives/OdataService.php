@@ -5,9 +5,10 @@ namespace LexxSoft\odata\Primitives;
 
 
 use DOMDocument;
+use Illuminate\Support\Env;
+use Illuminate\Support\Facades\Config;
 use LexxSoft\odata\Db\OdataFieldDescription;
 use LexxSoft\odata\OdataHelper;
-use function PHPUnit\Framework\isEmpty;
 
 /**
  * Class OdataService
@@ -15,11 +16,6 @@ use function PHPUnit\Framework\isEmpty;
  */
 class OdataService
 {
-  /**
-   * @var DOMDocument|null
-   */
-//    private static $dom = null;
-
   /**
    * Генерация $metadata xml ответа
    * @return string
@@ -199,32 +195,62 @@ class OdataService
 
   /**
    * Возвращает массив сущностей
-   * @param string|null $scanPath
+   * @param string|null $scanPath ! Используется только для рекурсии
    * @return array
    */
   private static function getEntityModels($scanPath = null): array
   {
-    // Сканируем все файлы и подпапки директории моделей
-    $path = $scanPath ? $scanPath : app_path() . '/Models';
-    $files = scandir($path);
+    $config = Config::get('odata');
+
+    $aFolders = [];
+
+    $aFolders [''] = $scanPath ? $scanPath : app_path() . DIRECTORY_SEPARATOR . 'Models';
+    foreach ($config['components'] as $sComponentNS) {
+      if (Env::get('LEXXSOFT_DEBUG', false))
+        $sPath = base_path('package') . DIRECTORY_SEPARATOR . 'blog' . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Models';
+      else
+        $sPath = base_path('vendor') . DIRECTORY_SEPARATOR . $sComponentNS . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Models';
+
+      if (!is_dir($sPath)) continue;
+      $aFolders[$sComponentNS] = $sPath;
+    }
+
     $out = [];
-    foreach ($files as $file) {
-      if ($file === '.' or $file === '..') continue;
-      $filename = $path . '/' . $file;
-      if (is_dir($filename)) {
-        // если папка - замыкаем рекурсию
-        $out = array_merge($out, self::getEntityModels($filename));
-      } else {
-        try {
-          // Пытаемся создать описание сущности на основе файла
-          $o = new OdataEntityDescription($filename);
-          $out[] = $o;
-        } catch (\Exception $e) {
+    foreach ($aFolders as $sNamespace => $sPath) {
+      // Сканируем все файлы и подпапки директории моделей
+      $files = scandir($sPath);
 
+      foreach ($files as $file) {
+        if ($file === '.' or $file === '..') continue;
+        $filename = $sPath . DIRECTORY_SEPARATOR . $file;
+        if (is_dir($filename)) {
+          // если папка - замыкаем рекурсию
+          $out = array_merge($out, self::getEntityModels($filename));
+        } else {
+          try {
+            // Пытаемся создать описание сущности на основе файла
+            $o = new OdataEntityDescription($filename, $sNamespace);
+            $out[$o->getEntityName()] = $o;
+          } catch (\Exception $e) {
+
+          }
         }
-
       }
     }
+
+    ksort($out, SORT_STRING);
     return $out;
+  }
+
+  /**
+   * Возвращает описание модели по имени сущности
+   *
+   * @param string $sEntityName Имя сущности
+   * @return OdataEntityDescription|null
+   * @since 0.7.0
+   */
+  public static function getEntityModelByEntityName(string $sEntityName):?OdataEntityDescription{
+    $aModels = self::getEntityModels();
+    return isset($aModels[$sEntityName])?$aModels[$sEntityName]:null;
   }
 }

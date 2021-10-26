@@ -27,6 +27,7 @@
 - [Data validation](#data-validation)
     - [How to define rules](#how-to-define-rules)
 - [OData helpers](#odata-helpers)
+- [Using external packages](#using-external-packages)
 
 # Installation
 ## Setup
@@ -72,6 +73,7 @@ Parameter|Type|Description|Default value
 ---|---|---|---
 routes_middleware|Array|Additional middleware for OData routes|`['auth:api']`
 upload_dir|String|Laravel Storage path for uploaded files|`uploads`
+components|Array<String>|List of packages, where models will be search. OData compatible models will be search in `Models` folder inside package `src` folder.  
 
 # Customisation data selection
 ## Controller methods
@@ -337,3 +339,32 @@ Method name|Alias|Parameters
 limitCollection|topCollection|&Collection
 skipCollection|offsetCollection|&Collection 
 filterCollection| |&Collection
+
+# Using external packages
+Since version 0.7.0 you can create yore own laravel packages with OData models and controllers.
+Use next rules to make model in yore package ODatable
+1. Namespace for package models must be `<Yore namespace>\Models` 
+1. Namespace for package controllers must be `<Yore namespace>\Http\Controllers\Api`
+1. All structure must be inside root `src` folder of yore package
+1. Package must be inside `vendor` folder
+
+## Package discover
+To discover yore package for CRM system, create `component.json` file in root directory of yore package with next structure^
+```json
+{
+  "name": "blog",
+  "type": "component",
+  "version": "0.0.1",
+  "description": "Blog component",
+  "license": "MIT",
+  "vendor": {
+    "name": "LexxSoft",
+    "url": "https://lexxsoft.ru",
+    "email": "support@lexxsoft.ru"
+  },
+  "require": {
+    "lexxsoft/odata": "0.7.0"
+  }
+}
+
+```  
