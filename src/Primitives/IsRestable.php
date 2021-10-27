@@ -121,7 +121,7 @@ trait IsRestable
              */
 //            $modelStartsWith = substr((new ReflectionClass($return->getRelated()))->getName(), 0, strlen('App\\Models\\'));
 //            if ($modelStartsWith !== 'App\\Models\\') {
-            if (OdataHelper::isModelNamespace((new ReflectionClass($return->getRelated()))->getName())) {
+            if (!OdataHelper::isModelNamespace((new ReflectionClass($return->getRelated()))->getName())) {
               continue;
             }
 
