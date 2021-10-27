@@ -42,7 +42,7 @@ class OdataFile
       throw $e;
     }
 
-    $obj = $restEntity->callDynamic();
+    $obj = $this->restEntity->callDynamic();
 
     if (isset($obj->isFile) && $obj->isFile === true) {
       $this->filename = $obj->getFilename($entityKey);
