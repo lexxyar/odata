@@ -8,12 +8,11 @@
   "authors": [
     {
       "name": "Aleksey Komov",
-      "email": "lexxyar@ya.ru"
+      "email": "support@lexxsoft.ru",
+      "homepage": "https://lexxsoft.ru"
     }
   ],
-  "require": {
-    "php": "^7.3|^8.0"
-  },
+  "require": {},
   "autoload": {
     "psr-4": {
       "LexxSoft\\odata\\": "src/"

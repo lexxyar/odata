@@ -30,6 +30,14 @@
 - [Using external packages](#using-external-packages)
 
 # Installation
+
+## Requirements
+Package `doctrine/dbal` is required
+
+```shell script
+composer require doctrine/dbal
+```
+
 ## Setup
 ```shell script
 composer require lexxsoft/odata
@@ -349,22 +357,11 @@ Use next rules to make model in yore package ODatable
 1. Package must be inside `vendor` folder
 
 ## Package discover
-To discover yore package for CRM system, create `component.json` file in root directory of yore package with next structure^
-```json
-{
-  "name": "blog",
-  "type": "component",
-  "version": "0.0.1",
-  "description": "Blog component",
-  "license": "MIT",
-  "vendor": {
-    "name": "LexxSoft",
-    "url": "https://lexxsoft.ru",
-    "email": "support@lexxsoft.ru"
-  },
-  "require": {
-    "lexxsoft/odata": "0.7.0"
-  }
-}
-
-```  
+To discover REST models in `vendor` packages, add namespaces into `/config/odata.php` to `components` section.
+```php
+'components' => [
+                  ...
+                  'LexxSoft\\core'
+                  ...
+                ]
+```
