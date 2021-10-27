@@ -205,4 +205,17 @@ class OdataHelper
   {
     return self::limitCollection($oCollection);
   }
+
+  /**
+   * Проверяет на нэймспэйс модели
+   *
+   * @param $sNamespace Нэймспэйс
+   * @return bool
+   *
+   * @since 0.7.4
+   */
+  public static function isModelNamespace(string $sNamespace):bool
+  {
+    return str_contains($sNamespace, '\\Models\\');
+  }
 }

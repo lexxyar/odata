@@ -2,7 +2,6 @@
 
 namespace LexxSoft\odata\Primitives;
 
-use App\Models\Upload;
 use LexxSoft\odata\Db\OdataFieldDescription;
 use LexxSoft\odata\OdataHelper;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -96,12 +95,16 @@ trait IsRestable
         && $reflectionMethod->getName() !== __FUNCTION__
       ) {
 
-        $modelStartsWith = substr($reflectionMethod->getDeclaringClass()->getName(), 0, strlen('App\\Models\\'));
-        if ($modelStartsWith == 'App\\Models\\') {
+        /**
+         * Проверяем на нэймспейс
+         * @since 0.7.4
+         */
+//        $modelStartsWith = substr($reflectionMethod->getDeclaringClass()->getName(), 0, strlen('App\\Models\\'));
+//        if ($modelStartsWith == 'App\\Models\\') {
+        if (OdataHelper::isModelNamespace($reflectionMethod->getDeclaringClass()->getName())) {
           try {
             $model = $model->firstOrFail();
           } catch (\Exception $ex) {
-//            dd($ex);
             continue;
           }
 
@@ -112,9 +115,13 @@ trait IsRestable
 
           if ($return instanceof Relation) {
 
-            $modelStartsWith = substr((new ReflectionClass($return->getRelated()))->getName(), 0, strlen('App\\Models\\'));
-
-            if ($modelStartsWith !== 'App\\Models\\') {
+            /**
+             * Проверяем на нэймспэйс модели
+             * @since 0.7.4
+             */
+//            $modelStartsWith = substr((new ReflectionClass($return->getRelated()))->getName(), 0, strlen('App\\Models\\'));
+//            if ($modelStartsWith !== 'App\\Models\\') {
+            if (OdataHelper::isModelNamespace((new ReflectionClass($return->getRelated()))->getName())) {
               continue;
             }
 
