@@ -337,7 +337,7 @@ class OdataEntity
     $this->oModel->fill($data);
 //    $isValid = $this->oModel->validateObject();
 
-    $aRules = $this->oModel->validationRules;
+    $aRules = $this->oModel->validationRules?$this->oModel->validationRules:[];
     $this->substituteValidationParameters($aRules);
 
     $oValidator = Validator::make($data, $aRules);
