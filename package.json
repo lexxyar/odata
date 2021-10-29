@@ -1,6 +1,6 @@
 {
   "name": "odata",
-  "version": "0.7.5",
+  "version": "0.7.6",
   "description": "OData composer package for laravel",
   "main": "index.js",
   "scripts": {
