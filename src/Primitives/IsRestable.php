@@ -161,8 +161,14 @@ trait IsRestable
   {
     if (sizeof($this->fields) > 0) return;
 
-    $raw = DB::select(DB::raw("DESCRIBE " . $this->getTable()));
     $this->fields = [];
+
+    try {
+      $raw = DB::select(DB::raw("DESCRIBE " . $this->getTable()));
+    } catch (\Illuminate\Database\QueryException $e) {
+      if ($e->getCode() == '42S02') return [];
+    }
+
     foreach ($raw as $field) {
       $this->fields[] = new OdataFieldDescription($field);
     }
