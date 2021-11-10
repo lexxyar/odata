@@ -626,6 +626,7 @@ class OdataEntity
 
   /**
    * Синхронизация данных для связей ManyToMany
+   * С версии 0.8.0 учитывает параметр запроса `_attach`
    * @param Model $find
    * @param array $aRelated
    */
@@ -634,7 +635,11 @@ class OdataEntity
     // Sync pivot table
     foreach ($aRelated as $key => $relation) {
       $syncField = ucfirst($relation->field);
-      call_user_func([$find, $syncField])->sync($relation->values);
+      if(in_array($relation->field, OdataRequest::getInstance()->attach)){
+        call_user_func([$find, $syncField])->attach($relation->values);
+      }else {
+        call_user_func([$find, $syncField])->sync($relation->values);
+      }
     }
   }
 

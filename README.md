@@ -231,9 +231,9 @@ GET /odata/user(1)
 ```
 
 ### Reading `SoftDelete` data
-To get data with trashed records, use `$force` flag in query request
+To get data with trashed records, use `_force` flag in query request
 ```http request
-GET /odata/role?$force=true
+GET /odata/role?_force=true
 ```
 
 ## Updating data
@@ -250,6 +250,7 @@ PUT /odata/role(2)
     "name":"User role"
 }
 ```   
+
 ### Updating relations
 To update Many-To-Many relationship, you need pass array of ID's for relation field name
 ```json
@@ -257,7 +258,23 @@ To update Many-To-Many relationship, you need pass array of ID's for relation fi
     "id": 2,
     "permissions": [5,6,7]
 }
-```  
+``` 
+
+If you have many-to-many relationship, system use Laravel `sync` method. 
+But, sometimes, you need to apply `atach` method for som relationshir field of model. 
+In that case, pass `_atach` parameter with names of field, separated by comma (,). 
+Method `attach` will be apply for that fields.
+
+```http request
+PUT /odata/role(2)?_attach=permissions
+```
+```json
+{
+    "id": 2,
+    "permissions": [7]
+}
+``` 
+ 
 ### Updating retations with pivot
 Somtimes Many-To-Many table has additional fields. To update them, pass array of objects for relation field.
 > Note, **key** field is required.

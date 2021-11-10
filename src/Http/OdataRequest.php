@@ -101,7 +101,11 @@ class OdataRequest
     if (isset($queryParams['$skip'])) {
       $this->parseOffset($queryParams['$skip']);
     }
-    if (isset($queryParams['$force'])) {
+    /**
+     * Вместо `$force `используется `_force`
+     * @since 0.8.0
+     */
+    if (isset($queryParams['_force'])) {
       $this->force = true;
     }
     if (isset($queryParams['$select'])) {
@@ -246,6 +250,20 @@ class OdataRequest
     $a = explode(',', $sSelect);
     foreach ($a as $item) {
       $this->select[] = trim($item);
+    }
+  }
+
+  /**
+   * Парсинг _attach
+   * @param $sAttach
+   *
+   * @since 0.8.0
+   */
+  private function parseAttach($sAttach){
+    $this->attach = [];
+    $a = explode(',', $sAttach);
+    foreach ($a as $item) {
+      $this->attach[] = trim($item);
     }
   }
 
