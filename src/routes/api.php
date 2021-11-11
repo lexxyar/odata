@@ -27,6 +27,10 @@ Route::middleware($config['routes_middleware'])->prefix('odata')->group(function
     $odata = new Odata();
     return $odata->response();
   })->where('any', '^(?!(api|odata)).*$');
+  Route::patch('/{any}', function () {
+    $odata = new Odata();
+    return $odata->response();
+  })->where('any', '^(?!(api|odata)).*$');
   Route::delete('/{any}', function () {
     $odata = new Odata();
     return $odata->response();

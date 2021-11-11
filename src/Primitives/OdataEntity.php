@@ -113,6 +113,8 @@ class OdataEntity
         }
       } elseif (request()->getMethod() === 'PUT') {
         $this->methodName = $isMass ? 'UpdateMassEntity' : 'UpdateEntity';
+      } elseif (request()->getMethod() === 'PATCH') {
+        $this->methodName = $isMass ? 'PatchMassEntity' : 'PatchEntity';
       } elseif (request()->getMethod() === 'DELETE') {
         $this->methodName = $isMass ? 'DeleteMassEntity' : 'DeleteEntity';
       } elseif (request()->getMethod() === 'GET') {
@@ -223,6 +225,14 @@ class OdataEntity
 
     if ($this->methodName == 'UpdateMassEntity') {
       return $this->dynamicUpdateMassData();
+    }
+
+    if ($this->methodName == 'PatchEntity') {
+      return $this->dynamicPatchData();
+    }
+
+    if ($this->methodName == 'PatchMassEntity') {
+      return $this->dynamicPatchMassData();
     }
 
     if ($this->methodName == 'DeleteEntity') {
@@ -337,7 +347,7 @@ class OdataEntity
     $this->oModel->fill($data);
 //    $isValid = $this->oModel->validateObject();
 
-    $aRules = $this->oModel->validationRules?$this->oModel->validationRules:[];
+    $aRules = $this->oModel->validationRules ? $this->oModel->validationRules : [];
     $this->substituteValidationParameters($aRules);
 
     $oValidator = Validator::make($data, $aRules);
@@ -386,7 +396,7 @@ class OdataEntity
    * Динамическое обновление данных
    * @param array|null $data
    * @return Model
-   * @noinspection PhpUndefinedMethodInspection
+   * @throws Exception
    */
   private function dynamicUpdateData($data = null)
   {
@@ -448,6 +458,90 @@ class OdataEntity
     try {
       foreach ($data as $item) {
         $oModel = $this->dynamicUpdateData($item);
+        $aResponse[] = $oModel;
+      }
+    } catch (Exception $exception) {
+      throw $exception;
+    }
+
+    return $aResponse;
+  }
+
+  /**
+   * Динамическое обновление данных
+   * Обновляет только переданныей поля
+   *
+   * @param array|null $data
+   * @return Model
+   * @throws Exception
+   *
+   * @since 0.9.0
+   */
+  private function dynamicPatchData($data = null)
+  {
+    if ($data === null) {
+      $data = json_decode(request()->getContent(), true);
+    }
+
+    $keyField = $this->oModel->getKeyName();
+    $id = array_key_exists($keyField, $data) ? $data[$keyField] : $this->key;
+    $find = $this->oModel->findOrFail($id);
+
+    // check relation fields
+    $aRelated = $this->extractRelationsFromInputData($data);
+
+    $this->oModel->fill($find->toArray());
+    $this->oModel->fill($data);
+
+    $aRules = $this->oModel->validationRules;
+    $this->substituteValidationParameters($aRules);
+
+    $oValidator = Validator::make($this->oModel->toArray(), $aRules);
+    $isValid = $oValidator->errors()->count() == 0;
+
+    if ($isValid) {
+      foreach ($data as $field => $value) {
+        if ($field == 'password') {
+          $value = Hash::make($value);
+        }
+        if (in_array($field, array_keys($find->attributesToArray())) && $find->$field !== $value) {
+          $find->$field = $value;
+        }
+      }
+      $find->save();
+
+      // Sync pivot table
+      $this->syncRelations($find, $aRelated);
+
+      $this->oModel = $find;
+    } else {
+      throw new Exception('json:' . $oValidator->errors()->toJson());
+    }
+
+    return $this->oModel;
+  }
+
+  /**
+   * Динамическое обновление массива объектов
+   * Обновляет только переданныей поля
+   *
+   * @param null $data Массив данных. Если не указан, то возьмется контент запроса
+   * @return array Вернет массив обновленных значений
+   * @throws Exception
+   *
+   * @since 0.9.0
+   */
+  private function dynamicPatchMassData($data = null)
+  {
+    if ($data === null) {
+      $data = json_decode(request()->getContent(), true);
+    }
+
+    $aResponse = [];
+
+    try {
+      foreach ($data as $item) {
+        $oModel = $this->dynamicPatchData($item);
         $aResponse[] = $oModel;
       }
     } catch (Exception $exception) {
@@ -635,9 +729,9 @@ class OdataEntity
     // Sync pivot table
     foreach ($aRelated as $key => $relation) {
       $syncField = ucfirst($relation->field);
-      if(in_array($relation->field, OdataRequest::getInstance()->attach)){
+      if (in_array($relation->field, OdataRequest::getInstance()->attach)) {
         call_user_func([$find, $syncField])->attach($relation->values);
-      }else {
+      } else {
         call_user_func([$find, $syncField])->sync($relation->values);
       }
     }

@@ -21,6 +21,7 @@
 - [Data manipulation](#data-manipulations)
     - [Reading data](#reading-data)
     - [Updating data](#updating-data)
+    - [Patching data](#patching-data)
     - [Creating data](#creating-data)
     - [Deleting data](#deleting-data)
     - [Bunch data action](#bunch-data-action)
@@ -248,6 +249,21 @@ PUT /odata/role(2)
 {
     "id": 2,
     "name":"User role"
+}
+``` 
+
+## Patching data
+To update data partialy, you should use `PATCH` method. Then, fill request body by new data.
+> Note, that system wil search record by key field, like `id`, which could be passed in request body with other data fields.
+>Otherwise key will be get from request address 
+
+Request example:
+```http request
+PATCH /odata/role(2)
+```
+```json
+{
+    "name":"New user role"
 }
 ```   
 
