@@ -62,6 +62,12 @@ class OdataRequest
   public $select = [];
 
   /**
+   * @var array
+   * @since 0.9.1
+   */
+  public $attach = [];
+
+  /**
    * Возвращает инстанцию класса
    * @return OdataRequest
    */
@@ -110,6 +116,13 @@ class OdataRequest
     }
     if (isset($queryParams['$select'])) {
       $this->parseSelect($queryParams['$select']);
+    }
+
+    /**
+     * @since 0.9.1
+     */
+    if (isset($queryParams['_attach'])) {
+      $this->parseAttach($queryParams['_attach']);
     }
   }
 
