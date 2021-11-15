@@ -120,7 +120,7 @@ class OdataEntity
       } elseif (request()->getMethod() === 'GET') {
         $this->methodName = $this->isList ? 'GetEntitySet' : 'GetEntity';
       }
-      $this->oModel = self::checkModel($this->modelName);
+//      $this->oModel = self::checkModel($this->modelName);
     }
   }
 
@@ -255,6 +255,7 @@ class OdataEntity
    */
   private function dynamicReadData()
   {
+    $this->oModel = self::checkModel($this->modelName);
     $queryBuilder = $this->oModel->newModelQuery();
 
     // Check on SoftDelete
@@ -334,6 +335,7 @@ class OdataEntity
     if ($data === null) {
       $data = json_decode(request()->getContent(), true);
     }
+    $this->oModel = self::checkModel($this->modelName);
     $keyField = $this->oModel->getKeyName();
 
     if (isset($data->password)) {
@@ -380,6 +382,8 @@ class OdataEntity
 
     $aResponse = [];
 
+    $this->oModel = self::checkModel($this->modelName);
+
     try {
       foreach ($data as $item) {
         $oModel = $this->dynamicCreateData($item);
@@ -403,6 +407,7 @@ class OdataEntity
     if ($data === null) {
       $data = json_decode(request()->getContent(), true);
     }
+    $this->oModel = self::checkModel($this->modelName);
     $keyField = $this->oModel->getKeyName();
     $id = array_key_exists($keyField, $data) ? $data[$keyField] : $this->key;
     $find = $this->oModel->findOrFail($id);
@@ -482,7 +487,7 @@ class OdataEntity
     if ($data === null) {
       $data = json_decode(request()->getContent(), true);
     }
-
+    $this->oModel = self::checkModel($this->modelName);
     $keyField = $this->oModel->getKeyName();
     $id = array_key_exists($keyField, $data) ? $data[$keyField] : $this->key;
     $find = $this->oModel->findOrFail($id);
@@ -563,6 +568,7 @@ class OdataEntity
       throw new Exception('Key not set');
     }
 
+    $this->oModel = self::checkModel($this->modelName);
     if (OdataRequest::getInstance()->force) {
       $this->oModel->where($this->oModel->getKeyName(), '=', $this->key)->forceDelete();
     } else {
