@@ -97,7 +97,11 @@ class OdataEntity
       $pathParts = explode('\\', $modelNamespace);
       array_pop($pathParts); // Сначала удалим последний элемент (он пустой)
       array_pop($pathParts); // Удаляем `Models`
-      $controllerNamespace = implode('\\', $pathParts) . '\\Http\\Controllers\\Api\\';
+      $controllerNamespace = implode('\\', $pathParts) . '\\Http\\Controllers\\';
+      $controllerSubfolder = env('controller_subfolder', '');
+      if($controllerSubfolder){
+        $controllerNamespace = $controllerNamespace.$controllerSubfolder.'\\';
+      }
       $this->modelName = $modelNamespace . ucfirst(strtolower($this->entityName));
       $this->controllerName = $controllerNamespace . ucfirst(strtolower($this->entityName)) . 'Controller';
       $this->methodName = '';

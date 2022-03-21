@@ -82,7 +82,8 @@ Parameter|Type|Description|Default value
 ---|---|---|---
 routes_middleware|Array|Additional middleware for OData routes|`['auth:api']`
 upload_dir|String|Laravel Storage path for uploaded files|`uploads`
-components|Array<String>|List of packages, where models will be search. OData compatible models will be search in `Models` folder inside package `src` folder.  
+components|Array<String>|List of packages, where models will be search. OData compatible models will be search in `Models` folder inside package `src` folder.
+controller_subfolder|String|Subfolder inside `/app/Http/Controllers` folder, where OData controllers are located. This path and controllers used for owerriding methods.
 
 # Customisation data selection
 ## Controller methods
@@ -362,7 +363,7 @@ When you use `IsRestable` trait, you can define `public` variable `$validationRu
 validation rules like in [Laravel article](https://laravel.com/docs/8.x/validation). Available rules are 
 [documented here](#https://laravel.com/docs/8.x/validation#available-validation-rules)
 
-Also you can use parameters in validation conditions. Parameter has mask `${<model field>}`. 
+Although you can use parameters in validation conditions. Parameter has mask `${<model field>}`. 
 For example, if you need to use value from model `ID` field, you must type `${id}`. 
 In example below, rule check unique email, excluding id of current record:
 ```php
