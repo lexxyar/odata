@@ -353,12 +353,14 @@ class OdataEntity
     $this->oModel->fill($data);
 //    $isValid = $this->oModel->validateObject();
 
+    $isValid = true;
     $aRules = $this->oModel->validationRules ? $this->oModel->validationRules : [];
-    $this->substituteValidationParameters($aRules);
+    if($aRules) {
+      $this->substituteValidationParameters($aRules);
 
-    $oValidator = Validator::make($data, $aRules);
-    $isValid = $oValidator->errors()->count() == 0;
-
+      $oValidator = Validator::make($data, $aRules);
+      $isValid = $oValidator->errors()->count() == 0;
+    }
     if ($isValid) {
       $this->oModel = $this->oModel->create($this->oModel->toArray());
 
@@ -421,12 +423,14 @@ class OdataEntity
 
     $this->oModel->fill($data);
 
+    $isValid = true;
     $aRules = $this->oModel->validationRules;
-    $this->substituteValidationParameters($aRules);
+    if($aRules) {
+      $this->substituteValidationParameters($aRules);
 
-    $oValidator = Validator::make($data, $aRules);
-    $isValid = $oValidator->errors()->count() == 0;
-
+      $oValidator = Validator::make($data, $aRules);
+      $isValid = $oValidator->errors()->count() == 0;
+    }
     if ($isValid) {
       foreach ($data as $field => $value) {
         if ($field == 'password') {
@@ -502,12 +506,14 @@ class OdataEntity
     $this->oModel->fill($find->toArray());
     $this->oModel->fill($data);
 
+    $isValid = true;
     $aRules = $this->oModel->validationRules;
-    $this->substituteValidationParameters($aRules);
+    if($aRules) {
+      $this->substituteValidationParameters($aRules);
 
-    $oValidator = Validator::make($this->oModel->toArray(), $aRules);
-    $isValid = $oValidator->errors()->count() == 0;
-
+      $oValidator = Validator::make($this->oModel->toArray(), $aRules);
+      $isValid = $oValidator->errors()->count() == 0;
+    }
     if ($isValid) {
       foreach ($data as $field => $value) {
         if ($field == 'password') {
