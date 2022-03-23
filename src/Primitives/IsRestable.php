@@ -108,7 +108,9 @@ trait IsRestable
             continue;
           }
 
-          if (in_array($reflectionMethod->name, ['forceDelete', 'getFields'])) {
+          if (in_array($reflectionMethod->name, ['forceDelete', 'getFields'
+            , 'getPermissionsViaRoles' // @since 0.9.4 Spatie laravel-permission fix
+          ])) {
             continue;
           }
           $return = $reflectionMethod->invoke($model);
