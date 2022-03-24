@@ -508,6 +508,11 @@ class OdataEntity
 
     $isValid = true;
     $aRules = $this->oModel->validationRules;
+    foreach ($aRules as $field=>$foo) {
+      if(!array_key_exists($field, $data)){
+        unset($aRules[$field]);
+      }
+    }
     if($aRules) {
       $this->substituteValidationParameters($aRules);
 
