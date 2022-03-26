@@ -76,6 +76,15 @@ class OdataEntity
   }
 
   /**
+   * Возвращает имя сущности
+   * @return string
+   */
+  public function getEntityName(): string
+  {
+    return $this->entityName;
+  }
+
+  /**
    * OdataEntity constructor.
    * @param string $entityName
    * @param mixed $key

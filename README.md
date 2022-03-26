@@ -95,6 +95,7 @@ routes_middleware|Array|Additional middleware for OData routes|`['auth:api']`
 upload_dir|String|Laravel Storage path for uploaded files|`uploads`
 components|Array<String>|List of packages, where models will be search. OData compatible models will be search in `Models` folder inside package `src` folder.
 controller_subfolder|String|Subfolder inside `/app/Http/Controllers` folder, where OData controllers are located. This path and controllers used for owerriding methods.
+check_spatie_laravel_permissions|Boolean|Set parameter to `true` for check permissions before `dynamicCall` method. If you have overrided methods inside yore own controller, you should check permissions __manually__ 
 
 # Customisation data selection
 
@@ -530,3 +531,7 @@ class Permission extends \Spatie\Permission\Models\Permission
     use IsRestable;
 }
 ```
+
+## Permissions check conditions
+To turn on permission check for OData entities, you should set `check_spatie_laravel_permissions` flag to `true` inside `/config/odata.php` file.
+>Note, that permissions will be check only for __dynamic__ call methods. If you have own controllers, you should check permissions __manually__

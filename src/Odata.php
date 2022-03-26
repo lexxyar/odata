@@ -5,6 +5,7 @@ namespace LexxSoft\odata;
 
 
 use Exception;
+use Illuminate\Support\Facades\Config;
 use LexxSoft\odata\Http\OdataRequest;
 use LexxSoft\odata\Resources\ODataDefaultResource;
 use LexxSoft\odata\Resources\ODataErrorResource;
@@ -70,6 +71,37 @@ class Odata
       } else {
         // Если нет контроллера или не описаны соответствующие методы,
         // то вызываем динамический процесс работы с данными
+
+        // Прочитаем конфиг.
+        // Если используется пакет Spatie laravel-permission,
+        // то нужно проверить разрешения для пользователя
+        $config = Config::get('odata');
+        if (isset($config['check_spatie_laravel_permissions'])
+          && $config['check_spatie_laravel_permissions'] == true
+          && !auth()->guest()) {
+          $sPermissionAction = 'access';
+          switch (request()->method()) {
+            case 'POST':
+              $sPermissionAction = 'create';
+              break;
+            case 'PATCH':
+            case 'PUT':
+              $sPermissionAction = 'update';
+              break;
+            case 'DELETE':
+              $sPermissionAction = 'delete';
+              break;
+            default:
+              $sPermissionAction = 'access';
+              break;
+          }
+
+          if (!auth()->user()->can($sPermissionAction . ' ' . $this->restEntity->getEntityName())) {
+            $sMessage = "Action '" . $sPermissionAction . "' with entity '" . $this->restEntity->getEntityName() . "' is not permited for yore user";
+            throw new Exception($sMessage);
+          }
+        }
+
         $this->response = $this->restEntity->callDynamic();
       }
     } catch (Exception $e) {
