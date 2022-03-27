@@ -108,8 +108,8 @@ class OdataEntity
       array_pop($pathParts); // Удаляем `Models`
       $controllerNamespace = implode('\\', $pathParts) . '\\Http\\Controllers\\';
       $controllerSubfolder = env('controller_subfolder', '');
-      if($controllerSubfolder){
-        $controllerNamespace = $controllerNamespace.$controllerSubfolder.'\\';
+      if ($controllerSubfolder) {
+        $controllerNamespace = $controllerNamespace . $controllerSubfolder . '\\';
       }
       $this->modelName = $modelNamespace . ucfirst(strtolower($this->entityName));
       $this->controllerName = $controllerNamespace . ucfirst(strtolower($this->entityName)) . 'Controller';
@@ -364,7 +364,7 @@ class OdataEntity
 
     $isValid = true;
     $aRules = $this->oModel->validationRules ? $this->oModel->validationRules : [];
-    if($aRules) {
+    if ($aRules) {
       $this->substituteValidationParameters($aRules);
 
       $oValidator = Validator::make($data, $aRules);
@@ -434,7 +434,7 @@ class OdataEntity
 
     $isValid = true;
     $aRules = $this->oModel->validationRules;
-    if($aRules) {
+    if ($aRules) {
       $this->substituteValidationParameters($aRules);
 
       $oValidator = Validator::make($data, $aRules);
@@ -443,10 +443,12 @@ class OdataEntity
     if ($isValid) {
       foreach ($data as $field => $value) {
         if ($field == 'password') {
-          $value = Hash::make($value);
-        }
-        if (in_array($field, array_keys($find->attributesToArray())) && $find->$field !== $value) {
-          $find->$field = $value;
+          $newValue = Hash::make($value);
+          $find->$field = $newValue;
+        } else {
+          if (in_array($field, array_keys($find->attributesToArray())) && $find->$field !== $value) {
+            $find->$field = $value;
+          }
         }
       }
       $find->save();
@@ -517,12 +519,12 @@ class OdataEntity
 
     $isValid = true;
     $aRules = $this->oModel->validationRules;
-    foreach ($aRules as $field=>$foo) {
-      if(!array_key_exists($field, $data)){
+    foreach ($aRules as $field => $foo) {
+      if (!array_key_exists($field, $data)) {
         unset($aRules[$field]);
       }
     }
-    if($aRules) {
+    if ($aRules) {
       $this->substituteValidationParameters($aRules);
 
       $oValidator = Validator::make($this->oModel->toArray(), $aRules);
@@ -531,10 +533,12 @@ class OdataEntity
     if ($isValid) {
       foreach ($data as $field => $value) {
         if ($field == 'password') {
-          $value = Hash::make($value);
-        }
-        if (in_array($field, array_keys($find->attributesToArray())) && $find->$field !== $value) {
-          $find->$field = $value;
+          $newVal = Hash::make($value);
+          $find->$field = $newVal;
+        } else {
+          if (in_array($field, array_keys($find->attributesToArray())) && $find->$field !== $newVal) {
+            $find->$field = $value;
+          }
         }
       }
       $find->save();
