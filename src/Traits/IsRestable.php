@@ -108,11 +108,21 @@ trait IsRestable
             continue;
           }
 
-          if (in_array($reflectionMethod->name, ['forceDelete', 'getFields'
-            , 'getPermissionsViaRoles' // @since 0.9.4 Spatie laravel-permission fix
-          ])) {
+          /**
+           * Skip methods 'forceDelete', 'getFields' to avoid errors
+           */
+          if (in_array($reflectionMethod->name, ['forceDelete', 'getFields'])) {
             continue;
           }
+
+          /**
+           * Spatie laravel-permission fix
+           */
+          if ($reflectionMethod->class == 'Spatie\Permission\Models\Permission' &&
+            in_array($reflectionMethod->name, ['users', 'getPermissionsViaRoles'])) {
+            continue;
+          }
+
           $return = $reflectionMethod->invoke($model);
 
           if ($return instanceof Relation) {
