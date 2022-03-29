@@ -1,6 +1,6 @@
 <?php
 
-namespace LexxSoft\odata\Primitives;
+namespace LexxSoft\odata\Traits;
 
 /**
  * Trait IsFile

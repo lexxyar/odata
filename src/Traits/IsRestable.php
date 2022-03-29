@@ -1,6 +1,6 @@
 <?php
 
-namespace LexxSoft\odata\Primitives;
+namespace LexxSoft\odata\Traits;
 
 use LexxSoft\odata\Db\OdataFieldDescription;
 use LexxSoft\odata\OdataHelper;
