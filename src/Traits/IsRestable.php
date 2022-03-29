@@ -6,6 +6,7 @@ use LexxSoft\odata\Db\OdataFieldDescription;
 use LexxSoft\odata\OdataHelper;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
+use LexxSoft\odata\Primitives\OdataRelationship;
 use ReflectionClass;
 use ReflectionMethod;
 

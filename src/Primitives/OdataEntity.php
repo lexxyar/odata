@@ -16,7 +16,6 @@ use LexxSoft\odata\Http\OdataFilter;
 use LexxSoft\odata\Http\OdataOrder;
 use LexxSoft\odata\Http\OdataRequest;
 use Illuminate\Database\Eloquent\Model;
-use LexxSoft\odata\Resources\ODataDefaultResource;
 use stdClass;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
