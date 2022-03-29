@@ -119,8 +119,9 @@ trait IsRestable
           /**
            * Spatie laravel-permission fix
            */
-          if ($reflectionMethod->class == 'Spatie\Permission\Models\Permission' &&
-            in_array($reflectionMethod->name, ['users', 'getPermissionsViaRoles'])) {
+          if (($reflectionMethod->class == 'Spatie\Permission\Models\Permission'
+              || $reflectionMethod->class == 'Spatie\Permission\Models\Role')
+            && in_array($reflectionMethod->name, ['users', 'getPermissionsViaRoles'])) {
             continue;
           }
 
