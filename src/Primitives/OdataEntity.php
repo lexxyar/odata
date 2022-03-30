@@ -535,7 +535,7 @@ class OdataEntity
           $newVal = Hash::make($value);
           $find->$field = $newVal;
         } else {
-          if (in_array($field, array_keys($find->attributesToArray())) && $find->$field !== $newVal) {
+          if (in_array($field, array_keys($find->attributesToArray())) && $find->$field !== $value) {
             $find->$field = $value;
           }
         }
