@@ -10,7 +10,8 @@ class OdataRouteServiceProvider extends ServiceProvider
 {
     public function boot(Kernel $kernel): void
     {
-        Route::prefix('odata')
-            ->group(base_path('routes/odata.php'));
+//        $this->loadRoutesFrom('../Routes/odata.php');
+//        Route::prefix('odata')
+//            ->group('../Routes/odata.php');
     }
 }

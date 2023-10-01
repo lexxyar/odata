@@ -1,6 +1,6 @@
 {
   "name": "lexxsoft/odata",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Laravel OData request parser",
   "type": "library",
   "license": "MIT",

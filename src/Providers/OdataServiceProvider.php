@@ -21,7 +21,8 @@ class OdataServiceProvider extends ServiceProvider
         ], 'odata');
 //        $kernel->pushMiddleware(OdataRequestParser::class);
 
-        app()->register(OdataRouteServiceProvider::class);
+//        app()->register(OdataRouteServiceProvider::class);
+        $this->loadRoutesFrom(__DIR__.'/../Routes/odata.php');
     }
 
 }
