@@ -16,23 +16,17 @@ use ReflectionMethod;
  *
  * Применяется к модели и определяет ее как REST сущность
  *
+ * @method getTable()
  */
 trait Restable
 {
-    protected bool $_isRestModel = true;
+    private array $fields = [];
 
-    public function isRestable():bool
+    public function getFields(): array
     {
-        return $this->_isRestModel;
+        $this->describeFields();
+        return $this->fields;
     }
-//    private array $fields = [];
-//
-//
-//    public function getFields(): array
-//    {
-//        $this->describeFields();
-//        return $this->fields;
-//    }
 
     /**
      * Выбор связей, описанных в модели
@@ -115,59 +109,59 @@ trait Restable
         return $relations;
     }
 
-//    /**
-//     * Составляет описание полей на основе БД
-//     */
-//    private function describeFields(): void
-//    {
-//        if (sizeof($this->fields) > 0) return;
-//
-//        $this->fields = [];
-//
-//        try {
-//            $raw = DB::select(DB::raw("DESCRIBE " . $this->getTable())
-//                ->getValue(DB::getQueryGrammar()));
-//        } catch (\Illuminate\Database\QueryException $e) {
-//            if ($e->getCode() == '42S02') return;
-//        }
-//
-//        foreach ($raw as $field) {
-//            $this->fields[] = new OdataFieldDescription($field);
-//        }
-//
-//        /*
-//        // Добавим кастомные атрибуты (Аксессоры и мутаторы)
-//        // Добавление по принципу наличия и Аксессора и Мутатора
-//        // Если объявлен только один, то его в метаданные не выводим
-//        $aAccessors = [];
-//        $aMutators = [];
-//        $re = '/(?<access>get|set)(?<name>\w+)Attribute/m';
-//        foreach (get_class_methods($this) as $methodName) {
-//          if (str_ends_with($methodName, 'Attribute')) {
-//            preg_match_all($re, $methodName, $matches, PREG_SET_ORDER, 0);
-//            if (sizeof($matches) > 0) {
-//              if (str_starts_with($methodName, 'get')) {
-//                $aAccessors[] = $matches[0]['name'];
-//              } elseif (str_starts_with($methodName, 'set')) {
-//                $aMutators[] = $matches[0]['name'];
-//              }
-//            }
-//          }
-//        }
-//
-//        $aIntersec = array_intersect($aAccessors, $aMutators);
-//        foreach ($aIntersec as $item) {
-//          $dbDescription = new \stdClass();
-//          $dbDescription->Field = $item;
-//          $dbDescription->Null = 'YES';
-//          $dbDescription->Key = '';
-//          $dbDescription->Default = '';
-//          $dbDescription->Type = 'TEXT';
-//          $this->fields[] = new OdataFieldDescription($dbDescription);
-//        }
-//    */
-//    }
-//
+    /**
+     * Составляет описание полей на основе БД
+     */
+    private function describeFields(): void
+    {
+        if (sizeof($this->fields) > 0) return;
+
+        $this->fields = [];
+
+        try {
+            $raw = DB::select(DB::raw("DESCRIBE " . $this->getTable())
+                ->getValue(DB::getQueryGrammar()));
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() == '42S02') return;
+        }
+
+        foreach ($raw as $field) {
+            $this->fields[] = new OdataFieldDescription($field);
+        }
+
+        /*
+        // Добавим кастомные атрибуты (Аксессоры и мутаторы)
+        // Добавление по принципу наличия и Аксессора и Мутатора
+        // Если объявлен только один, то его в метаданные не выводим
+        $aAccessors = [];
+        $aMutators = [];
+        $re = '/(?<access>get|set)(?<name>\w+)Attribute/m';
+        foreach (get_class_methods($this) as $methodName) {
+          if (str_ends_with($methodName, 'Attribute')) {
+            preg_match_all($re, $methodName, $matches, PREG_SET_ORDER, 0);
+            if (sizeof($matches) > 0) {
+              if (str_starts_with($methodName, 'get')) {
+                $aAccessors[] = $matches[0]['name'];
+              } elseif (str_starts_with($methodName, 'set')) {
+                $aMutators[] = $matches[0]['name'];
+              }
+            }
+          }
+        }
+
+        $aIntersec = array_intersect($aAccessors, $aMutators);
+        foreach ($aIntersec as $item) {
+          $dbDescription = new \stdClass();
+          $dbDescription->Field = $item;
+          $dbDescription->Null = 'YES';
+          $dbDescription->Key = '';
+          $dbDescription->Default = '';
+          $dbDescription->Type = 'TEXT';
+          $this->fields[] = new OdataFieldDescription($dbDescription);
+        }
+    */
+    }
+
 //    /**
 //     * Проверяет наличие поля
 //     */

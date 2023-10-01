@@ -7,6 +7,7 @@ namespace Lexxsoft\Odata;
 use Lexxsoft\Odata\Exceptions\OdataModelIsNotRestableException;
 use Lexxsoft\Odata\Exceptions\OdataModelNotExistException;
 use Illuminate\Database\Eloquent\Model;
+use Lexxsoft\Odata\Traits\Restable;
 
 /**
  * Class OdataEntityDescription
@@ -96,11 +97,7 @@ class OdataEntityDescription
         }
 
         $model = new $modelName;
-        if (!property_exists($model, 'isRestModel')) {
-            throw new OdataModelIsNotRestableException($modelName);
-        }
-
-        if (!$model->isRestModel) {
+        if (!in_array(Restable::class, class_uses($model))) {
             throw new OdataModelIsNotRestableException($modelName);
         }
 

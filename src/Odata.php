@@ -20,6 +20,7 @@ class Odata
     {
         $this->_request = OdataRequest::getInstance();
         $this->parseUrlPath();
+        $this->_odataEntity = new OdataEntity($this->_entity);
     }
 
     public function getId(): string|null
@@ -220,7 +221,6 @@ class Odata
 
     public function get(): \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
     {
-        $this->_odataEntity = new OdataEntity($this->_entity);
         $queryBuilder = $this->prepareGetQueryBuilder();
 
         $coutnBuilder = null;
