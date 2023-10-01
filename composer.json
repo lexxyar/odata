@@ -1,0 +1,40 @@
+{
+  "name": "lexxsoft/odata",
+  "version": "1.0.0",
+  "description": "Laravel OData request parser",
+  "type": "library",
+  "license": "MIT",
+  "keywords": [
+    "odata",
+    "universal platform",
+    "library",
+    "laravel"
+  ],
+  "autoload": {
+    "psr-4": {
+      "Lexxsoft\\Odata\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Aleksey Komov",
+      "email": "lexxyar@ya.ru",
+      "homepage": "http://lexxsoft.ru",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=8.1",
+    "ext-dom": "*"
+  },
+  "require-dev": {
+    "laravel/framework": "^10.5"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Lexxsoft\\Odata\\Providers\\OdataServiceProvider"
+      ]
+    }
+  }
+}
