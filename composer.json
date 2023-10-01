@@ -1,6 +1,6 @@
 {
   "name": "lexxsoft/odata",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Laravel OData request parser",
   "type": "library",
   "license": "MIT",
@@ -33,7 +33,8 @@
   "extra": {
     "laravel": {
       "providers": [
-        "Lexxsoft\\Odata\\Providers\\OdataServiceProvider"
+        "Lexxsoft\\Odata\\Providers\\OdataServiceProvider",
+        "Lexxsoft\\Odata\\Providers\\OdataRouteServiceProvider"
       ]
     }
   }
