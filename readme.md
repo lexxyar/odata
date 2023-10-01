@@ -1,7 +1,10 @@
 # Laravel OData REST
 
+![Latest Stable Version](http://poser.pugx.org/lexxsoft/odata/v)
 ![GitHub](https://img.shields.io/github/license/lexxyar/odata)
-![GitHub package.json version](https://img.shields.io/github/package-json/v/lexxyar/odata)
+![Package validation status](https://github.com/lexxyar/odata/actions/workflows/validating.yml/badge.svg)
+![PHP Version Require](http://poser.pugx.org/lexxsoft/odata/require/php)
+![License](http://poser.pugx.org/lexxsoft/odata/license)
 
 # Contents
 
