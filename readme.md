@@ -5,6 +5,7 @@
 ![Package validation status](https://github.com/lexxyar/odata/actions/workflows/validating.yml/badge.svg)
 ![PHP Version Require](http://poser.pugx.org/lexxsoft/odata/require/php)
 ![License](http://poser.pugx.org/lexxsoft/odata/license)
+![Total Downloads](http://poser.pugx.org/lexxsoft/odata/downloads)
 
 # Contents
 

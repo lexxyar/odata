@@ -227,6 +227,8 @@ class Odata
         $count = 0;
         if ($this->_request->count) {
             $coutnBuilder = clone $queryBuilder;
+            $coutnBuilder->getQuery()->limit = null;
+            $coutnBuilder->getQuery()->offset = null;
         }
 
         if ($this->_id !== null) {
