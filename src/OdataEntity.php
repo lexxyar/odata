@@ -48,7 +48,7 @@ class OdataEntity
 
     private function buildControllerClassName(): string
     {
-        return config('odata.namespace.controllers', "\\Http\\Controllers") . "\\" . ucfirst(Str::singular($this->_entityName) . 'Controller');
+        return config('odata.namespace.controllers', "\\App\\Http\\Controllers") . "\\" . ucfirst(Str::singular($this->_entityName) . 'Controller');
     }
 
     /**
