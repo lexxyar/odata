@@ -21,6 +21,7 @@ class Odata
         $this->_request = OdataRequest::getInstance();
         $this->parseUrlPath();
         $this->_odataEntity = new OdataEntity($this->_entity);
+        $this->_odataEntity->setId($this->hasId() ? $this->_id : null);
     }
 
     public function getId(): string|null

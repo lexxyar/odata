@@ -13,13 +13,28 @@ class OdataEntity
     private string $_methodName = '';
     private string $_controllerName = '';
     private string $_modelName = '';
+    private string|null $_id = null;
 
+    public function getId(): string
+    {
+        return $this->_id;
+    }
+
+    public function setId(string|null $value): void
+    {
+        $this->_id = $value;
+    }
 
     public function __construct(string $entityName)
     {
         $this->_entityName = $entityName;
         $this->_controllerName = $this->buildControllerClassName();
         $this->_methodName = $this->detectControllerMethodName();
+    }
+
+    public function hasId(): bool
+    {
+        return $this->_id !== null;
     }
 
     public function getModel(): \Illuminate\Database\Eloquent\Model
@@ -97,6 +112,9 @@ class OdataEntity
         }
 
         $controller = new $this->_controllerName;
-        return call_user_func_array([$controller, $this->_methodName], []);
+        if ($this->hasId()) {
+            request()->id = $this->_id;
+        }
+        return call_user_func_array([$controller, $this->_methodName], [request()]);
     }
 }
