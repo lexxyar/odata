@@ -34,7 +34,7 @@ class Odata
         return $this->_id !== null;
     }
 
-    public function makeResponse(): \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+    public function makeResponse(): mixed
     {
         if ($this->_odataEntity->hasController()) {
             return $this->_odataEntity->callController();

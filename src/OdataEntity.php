@@ -105,7 +105,7 @@ class OdataEntity
      * Вызов метода контроллера
      * @throws OdataTryCallControllerException
      */
-    public function callController(): \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+    public function callController(): mixed
     {
         if (!$this->hasController()) {
             throw new OdataTryCallControllerException($this->_controllerName, $this->_methodName);

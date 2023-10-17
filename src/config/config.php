@@ -2,6 +2,11 @@
 return [
     'namespace' => [
         'models' => '\\App\\Models',
-        'controllers' => '\\Http\\Controllers',
+        'controllers' => '\\App\\Http\\Controllers',
     ],
+    'routes' => [
+        'middlewares' => [
+            'auth',
+        ]
+    ]
 ];
