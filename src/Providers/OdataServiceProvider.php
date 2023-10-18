@@ -16,14 +16,14 @@ class OdataServiceProvider extends ServiceProvider
         $kernel->pushMiddleware(OdataRequestParser::class);
 
         $this->publishes([
-            __DIR__.'/../config/config.php' => config_path('odata.php'),
+            __DIR__ . '/../config/odata.php' => config_path('odata.php'),
 //            __DIR__.'/../Routes/odata.php' => base_path('routes/odata.php'),
         ], 'odata');
 //        $kernel->pushMiddleware(OdataRequestParser::class);
 
 //        app()->register(OdataRouteServiceProvider::class);
         $this->mergeConfigFrom(__DIR__ . '/../config/odata.php', 'odata');
-        $this->loadRoutesFrom(__DIR__.'/../Routes/odata.php');
+        $this->loadRoutesFrom(__DIR__ . '/../Routes/odata.php');
     }
 
 }
