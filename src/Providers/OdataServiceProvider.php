@@ -16,8 +16,8 @@ class OdataServiceProvider extends ServiceProvider
         $kernel->pushMiddleware(OdataRequestParser::class);
 
         $this->publishes([
-            '../config/config.php' => config_path('odata.php'),
-            '../Routes/odata.php' => base_path('routes/odata.php'),
+            './config/config.php' => config_path('odata.php'),
+            './Routes/odata.php' => base_path('routes/odata.php'),
         ], 'odata');
 //        $kernel->pushMiddleware(OdataRequestParser::class);
 

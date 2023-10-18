@@ -41,7 +41,7 @@ composer require lexxsoft/odata
 After installation all routes as `/odata/*` will be accessible
 
 ```shell script
-php artisan vendor:publish --provider="LexxSoft\odata\OdataServiceProvider"
+php artisan vendor:publish --provider="Lexxsoft\Odata\Providers\OdataServiceProvider"
 ``` 
 
 After that `config/odata.php` file will appear.
