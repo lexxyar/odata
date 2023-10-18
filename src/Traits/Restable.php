@@ -126,7 +126,7 @@ trait Restable
         }
 
         foreach ($raw as $field) {
-            $this->fields[] = new OdataFieldDescription($field);
+            $this->fields[] = new OdataFieldDescription($field, $this->getTable());
         }
 
         /*

@@ -8,9 +8,11 @@ namespace Lexxsoft\Odata;
  */
 class OdataFieldDescription
 {
+    private string $table;
     private string $name;
     private bool $isNullable;
     private bool $isPrimary;
+    private bool $isUnique;
     private string|null $default;
     private string $dbType;
     private string $type;
@@ -19,7 +21,11 @@ class OdataFieldDescription
     private int $float;
     private int $int;
 
-    public function getName(): string
+    public function getTable(): string
+    {
+        return $this->table;
+    }
+public function getName(): string
     {
         return $this->name;
     }
@@ -32,6 +38,16 @@ class OdataFieldDescription
     public function isNullable(): bool
     {
         return $this->isNullable;
+    }
+
+    public function isPrimary(): bool
+    {
+        return $this->isPrimary;
+    }
+
+    public function isUnique(): bool
+    {
+        return $this->isUnique;
     }
 
     public function getSize(): int
@@ -49,11 +65,13 @@ class OdataFieldDescription
         return $this->int;
     }
 
-    public function __construct(object $dbDescription)
+    public function __construct(object $dbDescription, string $tableName='')
     {
+        $this->table = $tableName;
         $this->name = $dbDescription->Field;
         $this->isNullable = !($dbDescription->Null === 'NO');
         $this->isPrimary = $dbDescription->Key === 'PRI';
+        $this->isUnique = $dbDescription->Key === 'UNI';
         $this->default = $dbDescription->Default;
         $this->dbType = $dbDescription->Type;
 

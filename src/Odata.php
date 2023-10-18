@@ -54,7 +54,7 @@ class Odata
         $path = urldecode(request()->getPathInfo());
 
         // remove /odata/
-        $entityPath = substr($path, strlen('/odata/'));
+        $entityPath = explode('/odata/', $path, 2)[1];
 
         // split by "/"
         $this->_pathParts = explode("/", $entityPath);
@@ -251,14 +251,19 @@ class Odata
 
     public function post(): \Illuminate\Http\JsonResponse
     {
-        $data = request()->all();
+//        $data = request()->all();
         $model = $this->_odataEntity->getModel();
-        $model->fill($data);
+
+        $validationRules = ValidationRulesGenerator::generate($model->getFields());
+        $filterRulesByFillable = array_intersect_key($validationRules, array_flip($model->getFillable()));
+        $data = request()->validate($filterRulesByFillable);
 
         // ToDo Password
 //        if (isset($data->password)) {
 //            $data->password = Hash::make($data->password);
 //        }
+
+        $model->fill($data);
 
         // sync data
         $aRelated = $this->extractRelationsFromInputData($data, $model);
@@ -287,21 +292,31 @@ class Odata
 
     public function patch(): \Illuminate\Http\Response
     {
+        return $this->update(true);
+    }
+
+    public function put(): \Illuminate\Http\Response
+    {
+        return $this->update(false);
+    }
+
+    private function update(bool $isPatchRequest = false): \Illuminate\Http\Response
+    {
         $model = $this->_odataEntity->getModel();
         if (!$this->_id) {
             throw new Error('Identifier is undefined');
         }
         $queryBuilder = $model->newModelQuery();
         $item = $queryBuilder->find($this->_id);
-        $data = request()->all();
+
+        $validationRules = ValidationRulesGenerator::generate($model->getFields(), $isPatchRequest, $this->_id);
+        $filterRulesByFillable = array_intersect_key($validationRules, array_flip($model->getFillable()));
+        $data = request()->validate($filterRulesByFillable);
+
+//        $data = request()->all();
         $item->fill($data);
         $item->save();
         return response()->noContent();
-    }
-
-    public function put(): \Illuminate\Http\Response
-    {
-        return $this->patch();
     }
 
     public function metadata(): \Illuminate\Http\Response
