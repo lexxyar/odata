@@ -2,6 +2,7 @@
 
 namespace Lexxsoft\Odata;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\Rule;
 
 class ValidationRulesGenerator
@@ -12,8 +13,13 @@ class ValidationRulesGenerator
      * @param mixed|null $ignoreId
      * @return array
      */
-    public static function generate(array $fieldDescriptionList, bool $sometimes = false, mixed $ignoreId = null): array
+    public static function generate(Model $model, bool $sometimes = false, bool $filterByFillable = true, mixed $ignoreId = null): array
     {
+        if (!Odata::modelIsRestable($model)) {
+            throw new \Exception('Model should use \\Lexxsoft\\Odata\\Traits\\Restable trait.');
+        }
+
+        $fieldDescriptionList = $model->getFields();
         $rules = [];
         $primaryKeyFieldName = 'id';
         /** @var OdataFieldDescription $fieldDesc */
@@ -42,6 +48,11 @@ class ValidationRulesGenerator
             }
             if (sizeof($rule) > 0) $rules[$fieldDesc->getName()] = $rule;
         }
+
+        if ($filterByFillable) {
+            $rules = array_intersect_key($rules, array_flip($model->getFillable()));
+        }
+
         return $rules;
     }
 }

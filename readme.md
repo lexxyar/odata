@@ -21,6 +21,8 @@
         + [Updating relations with pivot](#updating-relations-with-pivot)
     * [Creating data](#creating-data)
     * [Deleting data](#deleting-data)
+- [Using custom controller methods](#using-custom-controller-methods)
+- [Data validation rules](#data-validation-rules)
 - [Spatie laravel permissions](#spatie-laravel-permissions)
 
 # Installation
@@ -192,6 +194,31 @@ To delete data, use `DELETE` request with record key
 ```http request
 DELETE /odata/role(2)
 ```
+
+# Using custom controller methods
+
+OData plugin can make almost all CRUD operation automatically. But some cases should be operated individually. To make
+it real, OData plugin will search controller for model in path `/app/Http/Controllers` with filename
+pattern `<Singular entity name>Controller.php`. If controller file found, second step will be search corresponding
+method in class
+controller. Methods name are same as for resource controller. Use table below to check method name for yore case:
+
+| HTTP method | Controller class method name |
+|-------------|------------------------------|
+| GET         | index                        |
+| POST        | store                        |
+| PUT         | update                       |
+| PATCH       | update                       |
+| DELETE      | destroy                      |
+
+As example, you have `User` model and `UserController` for it. But, when you make odata http request, you use plural
+name like `/odata/users`. Be carefully with this part.
+
+# Data validation rules
+
+Operations like `create` or `update` should validate data, which comes from client. for this
+purpose `ValidationRulesGenerator` class is used. It generate validation rules **only** for `Restable` model, using
+database fields description. And, by default, it generate rules only for `fillable` fields.
 
 # Spatie laravel permissions
 

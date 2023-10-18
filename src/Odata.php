@@ -254,9 +254,8 @@ class Odata
 //        $data = request()->all();
         $model = $this->_odataEntity->getModel();
 
-        $validationRules = ValidationRulesGenerator::generate($model->getFields());
-        $filterRulesByFillable = array_intersect_key($validationRules, array_flip($model->getFillable()));
-        $data = request()->validate($filterRulesByFillable);
+        $validationRules = ValidationRulesGenerator::generate($model);
+        $data = request()->validate($validationRules);
 
         // ToDo Password
 //        if (isset($data->password)) {
@@ -309,9 +308,8 @@ class Odata
         $queryBuilder = $model->newModelQuery();
         $item = $queryBuilder->find($this->_id);
 
-        $validationRules = ValidationRulesGenerator::generate($model->getFields(), $isPatchRequest, $this->_id);
-        $filterRulesByFillable = array_intersect_key($validationRules, array_flip($model->getFillable()));
-        $data = request()->validate($filterRulesByFillable);
+        $validationRules = ValidationRulesGenerator::generate($model, sometimes: $isPatchRequest, ignoreId: $this->_id);
+        $data = request()->validate($validationRules);
 
 //        $data = request()->all();
         $item->fill($data);
@@ -524,7 +522,7 @@ class Odata
      */
     private function extractRelationsFromInputData(&$data, Model $oModel): array
     {
-        if (!in_array("\\Lexxsoft\\Odata\\Traits\\Restable", class_uses($oModel))) {
+        if (!self::modelIsRestable($oModel)) {
             return [];
         }
 
@@ -559,5 +557,10 @@ class Odata
             }
         }
         return $aRelated;
+    }
+
+    public static function modelIsRestable(Model $model): bool
+    {
+        return in_array("\\Lexxsoft\\Odata\\Traits\\Restable", class_uses($model));
     }
 }
