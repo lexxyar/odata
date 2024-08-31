@@ -1,6 +1,6 @@
 <?php
 
-namespace Lexxsoft\Odata;
+namespace Lexxsoft\Odata\Support;
 
 class OdataExpand
 {
@@ -26,13 +26,14 @@ class OdataExpand
 
     public function __construct(string $rawValue)
     {
-        $this->_hasOptions = $rawValue[-1] === ')';
+        $cleanValue = trim($rawValue);
+        $this->_hasOptions = $cleanValue[-1] === ')';
 
         if ($this->_hasOptions) {
-            $this->_expandEntity = explode('(', $rawValue)[0];
+            $this->_expandEntity = explode('(', $cleanValue)[0];
 
             $re = '/\((?<options>.*)\)/m';
-            preg_match_all($re, $rawValue, $matches, PREG_SET_ORDER, 0);
+            preg_match_all($re, $cleanValue, $matches, PREG_SET_ORDER, 0);
             $optionsString = $matches[0]['options'];
             if (!empty(trim($optionsString))) {
                 $optionsParts = explode(';', $optionsString);
@@ -51,7 +52,7 @@ class OdataExpand
             }
 
         } else {
-            $this->_expandEntity = $rawValue;
+            $this->_expandEntity = $cleanValue;
         }
     }
 

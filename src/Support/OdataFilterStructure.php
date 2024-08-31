@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Lexxsoft\Odata;
+namespace Lexxsoft\Odata\Support;
 
 class OdataFilterStructure
 {

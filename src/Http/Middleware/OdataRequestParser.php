@@ -21,7 +21,8 @@ class OdataRequestParser
     public function handle(Request $request, Closure $next): mixed
     {
         $odataRequest = OdataRequest::getInstance();
-        $request->oData = $odataRequest;
+        Request::macro('oData', $odataRequest);
+//        $request->oData = $odataRequest;
         return $next($request);
     }
 }

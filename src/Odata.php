@@ -6,6 +6,7 @@ use Error;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Lexxsoft\Odata\Exceptions\NotOdataRequestException;
 use Lexxsoft\Odata\Exceptions\OdataIdentifierIsUndefined;
 
 class Odata
@@ -13,8 +14,13 @@ class Odata
     protected OdataRequest $_request;
     protected string $_entity;
     protected string|null $_id;
-    protected array|null $_pathParts;
+    protected array|null $_pathParts = [];
     protected OdataEntity $_odataEntity;
+
+    public static function make(...$parameters): static
+    {
+        return new static(...$parameters);
+    }
 
     public function __construct()
     {
@@ -51,10 +57,17 @@ class Odata
 
     private function parseUrlPath(): void
     {
+        $this->_id = null;
+        $this->_entity = '';
+
         $path = urldecode(request()->getPathInfo());
 
-        // remove /odata/
-        $entityPath = explode('/odata/', $path, 2)[1];
+        try {
+            // remove /odata/
+            $entityPath = explode('/odata/', $path, 2)[1];
+        } catch (\Exception $ex) {
+            throw new NotOdataRequestException();
+        }
 
         // split by "/"
         $this->_pathParts = explode("/", $entityPath);
@@ -64,7 +77,6 @@ class Odata
         }
 
         $this->_entity = array_shift($this->_pathParts);
-        $this->_id = null;
 
         if ($this->_entity[-1] == ')') {
             $re = '/(?<entity>\S*[^(])\((?<quote>[\'"])(?<id>.*)(?&quote)\)/m';
@@ -217,7 +229,9 @@ class Odata
             $data = $res;
         }
 
+//        dd($data, [$data]);
         return response()->json($data);
+//        return response()->json(['test'=>'me']);
     }
 
     public function get(): \Illuminate\Http\Response|\Illuminate\Http\JsonResponse

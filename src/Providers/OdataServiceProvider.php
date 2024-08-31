@@ -4,6 +4,7 @@ namespace Lexxsoft\Odata\Providers;
 
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Support\ServiceProvider;
+use Lexxsoft\Odata\Console\MakeOdataControllerCommand;
 use Lexxsoft\Odata\Http\Middleware\OdataRequestParser;
 
 //use Lexxsoft\Odata\Middleware\OdataRequestParser;
@@ -13,17 +14,25 @@ class OdataServiceProvider extends ServiceProvider
 {
     public function boot(Kernel $kernel): void
     {
+        // Add middleware to app
         $kernel->pushMiddleware(OdataRequestParser::class);
 
         $this->publishes([
             __DIR__ . '/../config/config.php' => config_path('odata.php'),
-//            __DIR__.'/../Routes/odata.php' => base_path('routes/odata.php'),
         ], 'odata');
-//        $kernel->pushMiddleware(OdataRequestParser::class);
 
-//        app()->register(OdataRouteServiceProvider::class);
         $this->mergeConfigFrom(__DIR__ . '/../config/config.php', 'odata');
-        $this->loadRoutesFrom(__DIR__ . '/../Routes/odata.php');
+
+        if (config('odata.routes.register', false)) {
+            $this->loadRoutesFrom(__DIR__ . '/../Routes/odata.php');
+        }
+
+        if ($this->app->runningInConsole()) {
+            $this->commands(
+                commands: [
+                    MakeOdataControllerCommand::class,
+                ]);
+        }
     }
 
 }

@@ -1,13 +1,10 @@
 <?php
 
-namespace Lexxsoft\Odata\Traits;
+namespace Lexxsoft\Odata\Contracts\Traits;
 
-use Lexxsoft\Odata\OdataFieldDescription;
-use Lexxsoft\Odata\OdataHelper;
-use Lexxsoft\Odata\OdataRelationship;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
+use Lexxsoft\Odata\Support\OdataFieldDescription;
 use ReflectionClass;
 use ReflectionMethod;
 
@@ -39,27 +36,14 @@ trait Restable
 
         $relations = [];
         foreach ($reflector->getMethods() as $reflectionMethod) {
-
             if ($reflectionMethod instanceof ReflectionMethod
                 && $reflectionMethod->isPublic()
                 && empty($reflectionMethod->getParameters())
-                && $reflectionMethod->getName() !== __FUNCTION__
+                && str_starts_with($reflectionMethod->getReturnType(), 'Illuminate\\Database\\Eloquent\\Relations\\')
             ) {
 
                 // Проверяем на нэймспэйс
-                if (OdataHelper::isModelNamespace($reflectionMethod->getDeclaringClass()->getName())) {
-                    try {
-                        $model = $model->firstOrFail();
-                    } catch (\Exception $ex) {
-                        continue;
-                    }
-
-                    /**
-                     * Skip methods 'forceDelete', 'getFields' to avoid errors
-                     */
-                    if (in_array($reflectionMethod->name, ['forceDelete', 'getFields'])) {
-                        continue;
-                    }
+                if ($this->isModelNamespace($reflectionMethod->getDeclaringClass()->getName())) {
 
                     /**
                      * Spatie laravel-permission fix
@@ -75,33 +59,28 @@ trait Restable
                     if ($return instanceof Relation) {
 
                         // Проверяем на нэймспэйс модели
-                        if (!OdataHelper::isModelNamespace((new ReflectionClass($return->getRelated()))->getName())) {
+                        if (!$this->isModelNamespace((new ReflectionClass($return->getRelated()))->getName())) {
                             continue;
                         }
 
+                        $reflectionClass = new ReflectionClass($return);
                         $ownerKey = null;
-                        if ((new ReflectionClass($return))->hasMethod('getOwnerKey'))
+                        if ($reflectionClass->hasMethod('getOwnerKey'))
                             $ownerKey = $return->getOwnerKey();
                         else {
                             $segments = explode('.', $return->getQualifiedParentKeyName());
                             $ownerKey = $segments[count($segments) - 1];
                         }
 
-                        $rel = new OdataRelationship([
-                            'name' => $reflectionMethod->getName(),
-                            'type' => (new ReflectionClass($return))->getShortName(),
-                            'model' => (new ReflectionClass($return->getRelated()))->getName(),
-                            'foreignKey' => (new ReflectionClass($return))->hasMethod('getForeignKeyName')
-                                ? $return->getForeignKeyName()
-                                : $return->getForeignPivotKeyName(),
-                            'ownerKey' => $ownerKey,
-                            'fkName' => (new ReflectionClass($return->getRawBindings()))->hasMethod('getTable')
-                                ? $return->getRawBindings()->getTable()
-                                : '',
-//                            'snakeName' => OdataHelper::toSnakeCase($reflectionMethod->getName()),
-                            'snakeName' => Str::snake($reflectionMethod->getName()),
-                        ]);
-                        $relations[] = $rel;
+                        $rel = new \stdClass();
+                        $rel->name = $reflectionMethod->getName();
+                        $rel->type = $reflectionClass->getShortName();
+                        $rel->model = get_class($return->getRelated());
+                        $rel->foreign = $reflectionClass->hasMethod('getForeignKeyName')
+                            ? $return->getForeignKeyName()
+                            : $return->getForeignPivotKeyName();
+                        $rel->key = $ownerKey;
+                        $relations[$rel->name] = $rel;
                     }
                 }
             }
@@ -160,6 +139,14 @@ trait Restable
           $this->fields[] = new OdataFieldDescription($dbDescription);
         }
     */
+    }
+
+    /**
+     * Проверяет на нэймспэйс модели
+     */
+    protected function isModelNamespace(string $sNamespace): bool
+    {
+        return str_contains($sNamespace, '\\Models\\');
     }
 
 //    /**

@@ -5,6 +5,7 @@ return [
         'controllers' => '\\App\\Http\\Controllers',
     ],
     'routes' => [
+        'register' => false,
         'middlewares' => [
             'auth',
         ]

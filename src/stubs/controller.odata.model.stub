@@ -1,0 +1,42 @@
+<?php
+
+namespace {{ namespace }};
+
+use Illuminate\Http\Request;
+use {{ namespacedModel }};
+use Lexxsoft\Odata\Http\Controllers\OdataController;
+use Lexxsoft\Odata\Services\Builders\OdataPostBuilder;
+use Lexxsoft\Odata\Services\Builders\OdataPutBuilder;
+
+class {{ class }} extends OdataController
+{
+
+    protected string $odataModel = {{ model }}::class;
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request): \Illuminate\Http\JsonResponse
+    {
+        return OdataPostBuilder::make()
+            ->model($this->odataModel)
+            ->validationRules([
+                // Add validation rules for request here
+            ])
+            ->post();
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id): \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+    {
+        return OdataPutBuilder::make()
+            ->model($this->odataModel)
+            ->id($id)
+            ->validationRules([
+                // Add validation rules for request here
+            ])
+            ->put();
+    }
+}

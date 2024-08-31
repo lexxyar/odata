@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Lexxsoft\Odata;
+namespace Lexxsoft\Odata\Support;
 
 /**
  * Class OdataFieldDescription
@@ -25,7 +25,8 @@ class OdataFieldDescription
     {
         return $this->table;
     }
-public function getName(): string
+
+    public function getName(): string
     {
         return $this->name;
     }
@@ -65,7 +66,7 @@ public function getName(): string
         return $this->int;
     }
 
-    public function __construct(object $dbDescription, string $tableName='')
+    public function __construct(object $dbDescription, string $tableName = '')
     {
         $this->table = $tableName;
         $this->name = $dbDescription->Field;
