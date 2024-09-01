@@ -7,7 +7,7 @@ namespace Lexxsoft\Odata;
 use Lexxsoft\Odata\Exceptions\OdataModelIsNotRestableException;
 use Lexxsoft\Odata\Exceptions\OdataModelNotExistException;
 use Illuminate\Database\Eloquent\Model;
-use Lexxsoft\Odata\Traits\Restable;
+use Lexxsoft\Odata\Contracts\Traits\Restable;
 
 /**
  * Class OdataEntityDescription

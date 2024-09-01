@@ -79,7 +79,7 @@ trait Restable
                         $rel->foreign = $reflectionClass->hasMethod('getForeignKeyName')
                             ? $return->getForeignKeyName()
                             : $return->getForeignPivotKeyName();
-                        $rel->key = $ownerKey;
+                        $rel->owner = $ownerKey;
                         $relations[$rel->name] = $rel;
                     }
                 }

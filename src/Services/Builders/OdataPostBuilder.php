@@ -36,15 +36,22 @@ class OdataPostBuilder extends OdataBuilder
 
         try {
             DB::transaction(function () use (&$validData) {
+//                if ($this->fnBeforeSave !== null) {
+//                    ($this->fnBeforeSave)($validData);
+//                    if ($validData instanceof MessageBag) {
+//                        throw new \Exception('Internal exception', 422);
+//                    }
+//                }
+
+                $model = $this->getModel();
+                $model->fill($validData);
+
                 if ($this->fnBeforeSave !== null) {
-                    ($this->fnBeforeSave)($validData);
+                    ($this->fnBeforeSave)($model);
                     if ($validData instanceof MessageBag) {
                         throw new \Exception('Internal exception', 422);
                     }
                 }
-
-                $model = $this->getModel();
-                $model->fill($validData);
 
                 // sync relations
                 $related = $this->extractRelationsFromInputData($validData, $model);

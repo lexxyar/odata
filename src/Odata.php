@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Lexxsoft\Odata\Exceptions\NotOdataRequestException;
 use Lexxsoft\Odata\Exceptions\OdataIdentifierIsUndefined;
+use Lexxsoft\Odata\Support\OdataFieldDescription;
 
 class Odata
 {
@@ -425,8 +426,8 @@ class Odata
                     $wrapper[1] = ')';
                 }
                 $NavigationProperty->setAttribute('Type', $wrapper[0] . $link . $wrapper[1]);
-                $NavigationProperty->setAttribute('up:foreign', $relation->foreignKey);
-                $NavigationProperty->setAttribute('up:primary', $relation->ownerKey);
+                $NavigationProperty->setAttribute('up:foreign', $relation->foreign);
+                $NavigationProperty->setAttribute('up:primary', $relation->owner);
 
                 $EntityType->appendChild($NavigationProperty);
             }

@@ -1,7 +1,7 @@
 <?php
-
-
 namespace Lexxsoft\Odata\Support;
+
+use Lexxsoft\Odata\OdataHelper;
 
 /**
  * Class OdataFieldDescription
