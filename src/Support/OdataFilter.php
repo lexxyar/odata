@@ -76,7 +76,7 @@ class OdataFilter implements Arrayable
      */
     public function toArray(string $tableAlias = ''): array
     {
-        $aParts = [0 => '', 1 => '', 2 => '', 3 => 'and'];
+        $aParts = [0 => '', 1 => '', 2 => '', 3 => true];
 
         if ($this->table !== '') {
             $aParts[0] = $this->table . '.';
@@ -88,7 +88,8 @@ class OdataFilter implements Arrayable
         $aParts[0] .= $this->field;
         $aParts[1] = self::toSqlSign($this->sign);
         $aParts[2] = $this->adoptValueType($this->value);
-        $aParts[3] = $this->condition;
+//        $aParts[3] = $this->condition;
+        $aParts[3] = $this->condition == 'and';
         return $aParts;
     }
 
