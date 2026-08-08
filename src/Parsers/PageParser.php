@@ -1,12 +1,12 @@
 <?php
 
-namespace Lexxsoft\Odata\Services\Parsers;
+namespace Lexxsoft\Odata\Parsers;
 
-class OffsetParser
+class PageParser
 {
     public function __invoke(array $queryParameters): int
     {
-        $keys = ['$skip', '$offset'];
+        $keys = ['page'];
         $value = '';
         foreach ($keys as $key) {
             if (isset($queryParameters[$key])) {
@@ -15,6 +15,6 @@ class OffsetParser
             }
         }
 
-        return empty(trim($value)) ? -1 : Str($value)->trim()->toInteger();
+        return empty(trim($value)) ? 1 : Str($value)->trim()->toInteger();
     }
 }

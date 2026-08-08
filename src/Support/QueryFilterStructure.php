@@ -1,9 +1,8 @@
 <?php
 
-
 namespace Lexxsoft\Odata\Support;
 
-class OdataFilterStructure
+class QueryFilterStructure
 {
     public string $condition = 'and';
     public string $field;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Lexxsoft\Odata\Services\Parsers;
+namespace Lexxsoft\Odata\Parsers;
 
 class CountParser
 {

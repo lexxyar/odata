@@ -1,12 +1,12 @@
 <?php
 
-namespace Lexxsoft\Odata\Services\Parsers;
+namespace Lexxsoft\Odata\Parsers;
 
-class LimitParser
+class OffsetParser
 {
     public function __invoke(array $queryParameters): int
     {
-        $keys = ['$top', '$limit'];
+        $keys = ['$skip', '$offset'];
         $value = '';
         foreach ($keys as $key) {
             if (isset($queryParameters[$key])) {

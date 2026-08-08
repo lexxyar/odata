@@ -3,17 +3,11 @@
 namespace Lexxsoft\Odata\Support;
 
 use Illuminate\Contracts\Support\Arrayable;
-use Lexxsoft\Odata\Contracts\OdataFilterOperator;
 
-/**
- * Class OdataFilter
- * @package LexxSoft\odata\Http
- */
-class OdataFilter implements Arrayable
+class QueryFilter implements Arrayable
 {
-
     public string $field;
-    public OdataFilterOperator $sign = OdataFilterOperator::EQ;
+    public QueryFilterOperator $sign = QueryFilterOperator::EQ;
     public string $value = '';
     public bool $group;
     public string $condition;
@@ -30,23 +24,23 @@ class OdataFilter implements Arrayable
     /**
      * OdataFilter constructor.
      */
-    public function __construct(OdataFilterStructure $oMatch)
+    public function __construct(QueryFilterStructure $oMatch)
     {
         $this->field = $oMatch->field;
 
-        if (str_starts_with($this->field, OdataFilterOperator::SUBSTRINGOF->value) ||
-            str_starts_with($this->field, OdataFilterOperator::CONTAINS->value) ||
-            str_starts_with($this->field, OdataFilterOperator::ENDSWITH->value) ||
-            str_starts_with($this->field, OdataFilterOperator::STARTSWITH->value)) {
+        if (str_starts_with($this->field, QueryFilterOperator::SUBSTRINGOF->value) ||
+            str_starts_with($this->field, QueryFilterOperator::CONTAINS->value) ||
+            str_starts_with($this->field, QueryFilterOperator::ENDSWITH->value) ||
+            str_starts_with($this->field, QueryFilterOperator::STARTSWITH->value)) {
 
             $sPattern = "{value}";
-            if (str_starts_with($this->field, OdataFilterOperator::SUBSTRINGOF->value)) {
+            if (str_starts_with($this->field, QueryFilterOperator::SUBSTRINGOF->value)) {
                 $sPattern = "%" . $sPattern . "%";
-            } elseif (str_starts_with($this->field, OdataFilterOperator::CONTAINS->value)) {
+            } elseif (str_starts_with($this->field, QueryFilterOperator::CONTAINS->value)) {
                 $sPattern = "%" . $sPattern . "%";
-            } elseif (str_starts_with($this->field, OdataFilterOperator::ENDSWITH->value)) {
+            } elseif (str_starts_with($this->field, QueryFilterOperator::ENDSWITH->value)) {
                 $sPattern = "%" . $sPattern;
-            } elseif (str_starts_with($this->field, OdataFilterOperator::STARTSWITH->value)) {
+            } elseif (str_starts_with($this->field, QueryFilterOperator::STARTSWITH->value)) {
                 $sPattern = $sPattern . "%";
             }
 
@@ -57,10 +51,10 @@ class OdataFilter implements Arrayable
             foreach ($matches as $match) {
                 $this->field = $match['Field'];
                 $this->value = preg_replace($reReplace, $match['Value'], $sPattern);
-                $this->sign = OdataFilterOperator::CP;
+                $this->sign = QueryFilterOperator::CP;
             }
         } else {
-            $this->sign = OdataFilterOperator::from(strtoupper($oMatch->operator));
+            $this->sign = QueryFilterOperator::from(strtoupper($oMatch->operator));
             $this->value = $oMatch->value;
             $this->group = $oMatch->group;
             if (str_starts_with($this->value, "'")) {
@@ -76,7 +70,7 @@ class OdataFilter implements Arrayable
      */
     public function toArray(string $tableAlias = ''): array
     {
-        $aParts = [0 => '', 1 => '', 2 => '', 3 => true];
+        $aParts = [0 => '', 1 => '', 2 => '', 3 => 'and'];
 
         if ($this->table !== '') {
             $aParts[0] = $this->table . '.';
@@ -88,8 +82,7 @@ class OdataFilter implements Arrayable
         $aParts[0] .= $this->field;
         $aParts[1] = self::toSqlSign($this->sign);
         $aParts[2] = $this->adoptValueType($this->value);
-//        $aParts[3] = $this->condition;
-        $aParts[3] = $this->condition == 'and';
+        $aParts[3] = $this->condition;
         return $aParts;
     }
 
@@ -107,16 +100,16 @@ class OdataFilter implements Arrayable
     /**
      * Конвертирование знака сравнения в SQL понятный
      */
-    public static function toSqlSign(OdataFilterOperator $operator = OdataFilterOperator::EQ): string
+    public static function toSqlSign(QueryFilterOperator $operator = QueryFilterOperator::EQ): string
     {
         $a = [
-            OdataFilterOperator::EQ->value => '=',
-            OdataFilterOperator::GT->value => '>',
-            OdataFilterOperator::GE->value => '>=',
-            OdataFilterOperator::LT->value => '<',
-            OdataFilterOperator::LE->value => '<=',
-            OdataFilterOperator::CP->value => 'LIKE',
-            OdataFilterOperator::NE->value => '<>',
+            QueryFilterOperator::EQ->value => '=',
+            QueryFilterOperator::GT->value => '>',
+            QueryFilterOperator::GE->value => '>=',
+            QueryFilterOperator::LT->value => '<',
+            QueryFilterOperator::LE->value => '<=',
+            QueryFilterOperator::CP->value => 'LIKE',
+            QueryFilterOperator::NE->value => '<>',
 //            self::IS => 'IS',
 //            self::ISNOT => 'IS NOT',
         ];
@@ -128,5 +121,4 @@ class OdataFilter implements Arrayable
         $parts = $this->toArray();
         return [[$parts[0], $parts[1], $parts[2]]];
     }
-
 }

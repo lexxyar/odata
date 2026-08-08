@@ -1,14 +1,11 @@
 <?php
 
-
 namespace Lexxsoft\Odata\Support;
 
-use Lexxsoft\Odata\Contracts\OdataOrderDirection;
-
-class OdataOrder
+class QueryOrder
 {
     public string $field = '';
-    public OdataOrderDirection $direction = OdataOrderDirection::ASC;
+    public QueryOrderDirection $direction = QueryOrderDirection::ASC;
 
     /**
      * OdataOrder constructor
@@ -20,20 +17,19 @@ class OdataOrder
         $parts = explode(' ', $value);
         if (sizeof($parts) === 2) {
             $this->field = Str($parts[0])->trim()->lower();
-            $this->direction = OdataOrder::convert($parts[1]);
+            $this->direction = QueryOrder::convert($parts[1]);
         }
         if (sizeof($parts) === 1) {
             $this->field = Str($parts[0])->trim()->lower();
-            $this->direction = OdataOrderDirection::ASC;
+            $this->direction = QueryOrderDirection::ASC;
         }
     }
 
     /**
      * Конвертирует значение константы в текстовое значение
      */
-    private static function convert(string $value): OdataOrderDirection
+    private static function convert(string $value): QueryOrderDirection
     {
-        return OdataOrderDirection::tryFrom(strtoupper(trim($value))) ?? OdataOrderDirection::ASC;
+        return QueryOrderDirection::tryFrom(strtoupper(trim($value))) ?? QueryOrderDirection::ASC;
     }
-
 }

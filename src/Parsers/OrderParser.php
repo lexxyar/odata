@@ -1,14 +1,14 @@
 <?php
 
-namespace Lexxsoft\Odata\Services\Parsers;
+namespace Lexxsoft\Odata\Parsers;
 
-use Lexxsoft\Odata\Support\OdataExpand;
+use Lexxsoft\Odata\Support\QueryOrder;
 
-class ExpandParser
+class OrderParser
 {
     public function __invoke(array $queryParameters): array
     {
-        $keys = ['$expand'];
+        $keys = ['$orderby', '$order'];
         $value = '';
         foreach ($keys as $key) {
             if (isset($queryParameters[$key])) {
@@ -22,7 +22,7 @@ class ExpandParser
         $res = [];
         $parts = explode(',', $value);
         foreach ($parts as $part) {
-            $res[] = new OdataExpand($part);
+            $res[] = new QueryOrder($part);
         }
         return $res;
     }

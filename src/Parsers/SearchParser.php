@@ -1,8 +1,6 @@
 <?php
 
-namespace Lexxsoft\Odata\Services\Parsers;
-
-use Lexxsoft\Odata\OdataOrder;
+namespace Lexxsoft\Odata\Parsers;
 
 class SearchParser
 {

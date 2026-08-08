@@ -1,9 +1,9 @@
 <?php
 
-namespace Lexxsoft\Odata\Services\Parsers;
+namespace Lexxsoft\Odata\Parsers;
 
-use Lexxsoft\Odata\Support\OdataFilter;
-use Lexxsoft\Odata\Support\OdataFilterStructure;
+use Lexxsoft\Odata\Support\QueryFilter;
+use Lexxsoft\Odata\Support\QueryFilterStructure;
 
 class FilterParser
 {
@@ -29,7 +29,7 @@ class FilterParser
         $stage = 0;
         $matches = [];
 
-        /** @var OdataFilterStructure $o */
+        /** @var QueryFilterStructure $o */
         $o = null;
         $group = 0;
         $isFirst = true;
@@ -40,14 +40,14 @@ class FilterParser
             if ($quote % 2 != 0) continue;
 
             if ($isFirst) {
-                $o = new OdataFilterStructure();
+                $o = new QueryFilterStructure();
                 $matches[] = $o;
                 $stage++;
             }
 
             switch ($stage) {
                 case 0: // Binary operation
-                    $o = new OdataFilterStructure();
+                    $o = new QueryFilterStructure();
                     $matches[] = $o;
                     $o->condition = $text;
                     $stage++;
@@ -87,7 +87,7 @@ class FilterParser
 
         $res = [];
         foreach ($matches as $match) {
-            $res[] = new OdataFilter($match);
+            $res[] = new QueryFilter($match);
         }
         return $res;
     }

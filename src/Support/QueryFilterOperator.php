@@ -1,8 +1,8 @@
 <?php
 
-namespace Lexxsoft\Odata\Contracts;
+namespace Lexxsoft\Odata\Support;
 
-enum OdataFilterOperator: string
+enum QueryFilterOperator: string
 {
     case EQ = 'EQ';
     case GT = 'GT';
